@@ -6,6 +6,7 @@ import {
 import logo from './images/logo.png'
 
 import './login.less'
+import { reqLogin } from "../../api";
 
 /**
  * 登录组件
@@ -15,11 +16,16 @@ class Login extends Component {
     handleSubmit = (e) => {
         e.preventDefault();
         const form = this.props.form;
-        console.log(form.getFieldsValue())
+        const {username, password} = form.getFieldsValue()
+        reqLogin(username, password).then((responsive)=>{
+
+        }).catch((err)=>{
+
+        })
     }
     validatorPwd = (rule,value,callback) => {
         if(!value){
-            callback('mu')
+            callback('密码不能为空')
         }
     }
     render() {
