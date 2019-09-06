@@ -15,13 +15,17 @@ class Login extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        const form = this.props.form;
-        const {username, password} = form.getFieldsValue()
-        reqLogin(username, password).then((responsive)=>{
+        /**
+         * promise 处理方式
+         */
+        // reqLogin(username, password).then((responsive)=>{
 
-        }).catch((err)=>{
+        // })
+        /**
+         * 简化promise.then()操作
+         */
+        this.props.
 
-        })
     }
     validatorPwd = (rule,value,callback) => {
         if(!value){
