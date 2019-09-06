@@ -1,6 +1,6 @@
 import React, { Component } from "react"
 import {
-    Form,Icon,Input,Button
+    Form,Icon,Input,Button,message
 } from 'antd'
 
 import logo from './images/logo.png'
@@ -15,16 +15,33 @@ class Login extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-        /**
-         * promise 处理方式
-         */
-        // reqLogin(username, password).then((responsive)=>{
 
-        // })
-        /**
-         * 简化promise.then()操作
-         */
-        this.props.
+        //对所有表单进行验证
+        this.props.form.validateFields(async (err, values) =>{
+            if(!err){
+                const {username,password} = values;
+                //promise 处理方式
+                // reqLogin(username, password).then((response)=>{
+                //     console.log('成功了', response.data)
+                // }).catch(error => {
+
+                // })
+
+                //简化promise.then()操作 使用async
+                try {
+                    const response = await reqLogin(username, password);
+                    if(response.status === 0){ 
+                        //提示登录成功
+                        message.success('登陆成功')
+
+                        //跳转到管理界面
+                        this.props.history.replace('/')
+                    }else{
+                        message.error(response.msg)
+                    }
+                } 
+            }
+        })
 
     }
     validatorPwd = (rule,value,callback) => {
