@@ -10,7 +10,7 @@ export default class LeftNav extends Component {
         return (
             <div className="left-nav">
                 <header className="left-nav-header">
-                    <img src={logo} alt="" srcset=""/>
+                    <img src={logo} alt=""/>
                     <h1>REACt</h1>
 
                 </header>

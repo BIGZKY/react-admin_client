@@ -22,8 +22,7 @@ class Login extends Component {
         //对所有表单进行验证
         this.props.form.validateFields(async (err, values) =>{
             if(!err){
-                // const {username,password} = values;
-
+                // const {username,password} = values
                 //简化promise.then()操作 使用async
                 try {
                     // const response = await reqLogin(username, password);
