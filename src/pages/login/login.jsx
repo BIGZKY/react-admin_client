@@ -1,12 +1,16 @@
 import React, { Component } from "react"
+import { Redirect } from "react-router-dom";
 import {
     Form,Icon,Input,Button,message
 } from 'antd'
 
-import logo from './images/logo.png'
+
+import logo from '../../assets/images/logo.png'
 
 import './login.less'
-import { reqLogin } from "../../api";
+// import { reqLogin } from "../../api";
+import storageUtils from "../../utils/storageUtils";
+import memmoryUtils from "../../utils/memmoryUtils";
 
 /**
  * 登录组件
@@ -15,42 +19,52 @@ class Login extends Component {
 
     handleSubmit = (e) => {
         e.preventDefault();
-
         //对所有表单进行验证
         this.props.form.validateFields(async (err, values) =>{
             if(!err){
-                const {username,password} = values;
-                //promise 处理方式
-                // reqLogin(username, password).then((response)=>{
-                //     console.log('成功了', response.data)
-                // }).catch(error => {
-
-                // })
+                // const {username,password} = values;
 
                 //简化promise.then()操作 使用async
                 try {
-                    const response = await reqLogin(username, password);
+                    // const response = await reqLogin(username, password);
+                    const response = {
+                        status: 0,
+                        data: {
+                            _id: '6578347658609219',
+                            username: 'admin',
+                            password: '123456'
+                        }
+                    }
                     if(response.status === 0){ 
                         //提示登录成功
                         message.success('登陆成功')
-
+                        
+                        //保存user
+                        const user = response.data;
+                        // 保存到内存
+                        memmoryUtils.user = user;
+                        // 保存到本地
+                        storageUtils.saveUser(user);
                         //跳转到管理界面
                         this.props.history.replace('/')
                     }else{
                         message.error(response.msg)
                     }
-                } 
+                } catch {
+
+                }
             }
         })
-
-    }
-    validatorPwd = (rule,value,callback) => {
-        if(!value){
-            callback('密码不能为空')
-        }
     }
     render() {
+
         const { getFieldDecorator } = this.props.form;
+        const user = memmoryUtils.user;
+        //如果内存没有存储user ==> 当前没有登录
+        if(user && user._id){
+            //跳转到登录界面
+            return <Redirect to="/admin" />
+        }
         return (
             <div className="loginWrap">
                 <header className="login-header">
@@ -79,10 +93,11 @@ class Login extends Component {
                         <Form.Item>
                             {getFieldDecorator('password', {
                                 rules: [
-                                    {
-                                        validator: this.validatorPwd
-                                    }
-                                ]
+                                        {required: true, message: '请输入密码!'},
+                                        {max: 12, message: '密码最多12位!'},
+                                        {min: 4, message: '密码最少4位!'},
+                                        {pattern: /^[0-9a-zA-Z_]+$/, message: '密码必须有数字, 字母组成!'},
+                                    ],
                             })(
                                 <Input
                                     prefix={<Icon type="lock" style={{color:'rgba(0,0,0,.25)'}}></Icon>}
