@@ -1,6 +1,6 @@
 import React, { Component } from "react"
-import { Menu, Icon } from 'antd';
-
+import { Menu, Icon } from 'antd'
+import {Link} from 'react-router-dom'
 
 import './index.less'
 import logo from '../../assets/images/logo.png'
@@ -20,9 +20,12 @@ export default class LeftNav extends Component {
                     mode="inline"
                     theme="dark"
                     >
-                    <Menu.Item key="1">
-                        <Icon type="pie-chart" />
-                        <span>Option 1</span>
+                    <Menu.Item key="/home">
+                        <Link to='/home'>
+                            <Icon type="pie-chart" />
+                            <span>首页</span>
+                        </Link>
+                        
                     </Menu.Item>
 
                     <SubMenu
@@ -30,15 +33,59 @@ export default class LeftNav extends Component {
                         title={
                         <span>
                             <Icon type="mail" />
-                            <span>Navigation One</span>
+                            <span>商品</span>
                         </span>
                         }
                     >
-                        <Menu.Item key="5">Option 5</Menu.Item>
-                        <Menu.Item key="6">Option 6</Menu.Item>
-                        <Menu.Item key="7">Option 7</Menu.Item>
-                        <Menu.Item key="8">Option 8</Menu.Item>
+                        <Menu.Item key="/category">
+                            <Link to='/category'>
+                                <span>品类管理</span>
+                            </Link>
+                        </Menu.Item>
+                        <Menu.Item key="/product">
+                            <Link to='/product'>
+                                <span>商品管理</span>
+                            </Link>
+                        </Menu.Item>
                     </SubMenu>
+                    <Menu.Item key="/user">
+                        <Link to='/user'>
+                            <Icon type="pie-chart" />
+                            <span>用户管理</span>
+                        </Link>
+                    </Menu.Item>
+                    <Menu.Item key="/role">
+                        <Link to='/role'>
+                            <Icon type="pie-chart" />
+                            <span>角色管理</span>
+                        </Link>
+                    </Menu.Item>
+                    <SubMenu
+                        key="sub2"
+                        title={
+                        <span>
+                            <Icon type="mail" />
+                            <span>图形图表</span>
+                        </span>
+                        }
+                    >
+                        <Menu.Item key="/charts/bar">
+                            <Link to='/charts/bar'>
+                                <span>柱形图</span>
+                            </Link>
+                        </Menu.Item>
+                        <Menu.Item key="/charts/line">
+                            <Link to='/charts/line'>
+                                <span>折线图</span>
+                            </Link>
+                        </Menu.Item>
+                        <Menu.Item key="/charts/pie">
+                            <Link to='/chartss/pie'>
+                                <span>饼图</span>
+                            </Link>
+                        </Menu.Item>
+                    </SubMenu>
+
                 </Menu>
             </div>
         )
