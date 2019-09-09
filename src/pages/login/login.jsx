@@ -24,34 +24,32 @@ class Login extends Component {
             if(!err){
                 // const {username,password} = values
                 //简化promise.then()操作 使用async
-                try {
+                
                     // const response = await reqLogin(username, password);
-                    const response = {
-                        status: 0,
-                        data: {
-                            _id: '6578347658609219',
-                            username: 'admin',
-                            password: '123456'
-                        }
+                const response = {
+                    status: 0,
+                    data: {
+                        _id: '6578347658609219',
+                        username: 'admin',
+                        password: '123456'
                     }
-                    if(response.status === 0){ 
-                        //提示登录成功
-                        message.success('登陆成功')
-                        
-                        //保存user
-                        const user = response.data;
-                        // 保存到内存
-                        memmoryUtils.user = user;
-                        // 保存到本地
-                        storageUtils.saveUser(user);
-                        //跳转到管理界面
-                        this.props.history.replace('/')
-                    }else{
-                        message.error(response.msg)
-                    }
-                } catch {
-
                 }
+                if(response.status === 0){ 
+                    //提示登录成功
+                    message.success('登陆成功')
+                    
+                    //保存user
+                    const user = response.data;
+                    // 保存到内存
+                    memmoryUtils.user = user;
+                    // 保存到本地
+                    storageUtils.saveUser(user);
+                    //跳转到管理界面
+                    this.props.history.replace('/')
+                }else{
+                    message.error(response.msg)
+                }
+                
             }
         })
     }
