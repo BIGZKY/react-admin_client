@@ -7,6 +7,7 @@ import {reqWeather} from '../../api/index'
 import {formateDate} from '../../utils/dateUtils'
 import memoryUtils from '../../utils/memmoryUtils'
 import menuList from '../../config/menuConfig'
+import LinkButton from '../link-button/link-button'
 import './index.less'
 
 class Header extends Component {
@@ -84,7 +85,7 @@ class Header extends Component {
           <div className="header">
             <div className="header-top">
               <span>欢迎, {username}</span>
-              <Button onClick={this.logout}>退出</Button>
+              <LinkButton onClick={this.logout}>退出</LinkButton>
             </div>
             <div className="header-bottom">
               <div className="header-bottom-left">{title}</div>
