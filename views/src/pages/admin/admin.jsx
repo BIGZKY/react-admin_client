@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import { Redirect ,Link, Route, Switch} from "react-router-dom";
+import { Redirect, Route, Switch} from "react-router-dom";
 import { Layout } from 'antd';
 
 import memoryUtils from "../../utils/memmoryUtils";

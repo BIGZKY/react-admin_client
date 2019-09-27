@@ -44,7 +44,7 @@ class LeftNav extends Component {
         return menuList.reduce((pre,item)=>{
             if(item.children){
                 // 查找一个与当前请求路径匹配的子Item
-                const cItem = item.children.find(cItem => cItem.key==pathname);
+                const cItem = item.children.find(cItem => cItem.key === pathname);
                 if(cItem) {
                     this.openKey = item.key;
                 }

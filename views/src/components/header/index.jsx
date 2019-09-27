@@ -1,6 +1,6 @@
 import React, { Component } from "react"
-import {Modal,Button } from 'antd'
-import {withRouter, Redirect} from 'react-router-dom'
+import {Modal} from 'antd'
+import {withRouter} from 'react-router-dom'
 
 import store from '../../utils/storageUtils'
 import {reqWeather} from '../../api/index'

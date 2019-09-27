@@ -20,9 +20,10 @@
         } else {
             promise = axios.post(url, data);
         }
+        
         //如果成功了, 调用resolve(value);
         promise.then(response => {
-            resolve(response)
+            resolve(response.data)
 
         }).catch (error => {
             message.error('请求出错了: '+ error.message)
