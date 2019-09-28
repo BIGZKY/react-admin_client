@@ -35,3 +35,6 @@ export const reqWeather = (city) => {
 
  //异步请求一级分类
 export const reqCategorys = (parentId) => ajax(BASE+'/admin/getCategory',{parentId});
+
+//更新分类
+export const reqUpdateCategory = (category_id,categoryName) => ajax(BASE+'/admin/updateCategory',{category_id,categoryName},'POST');

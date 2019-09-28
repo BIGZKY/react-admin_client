@@ -2,7 +2,9 @@ import React, { Component } from "react"
 import {Card, Table, Button, Icon, message, Modal} from 'antd'
 
 import LinkButton from '../../components/link-button/link-button'
-import { reqCategorys } from "../../api"
+import { reqCategorys, reqUpdateCategory } from "../../api"
+import AddForm from "./add-form"
+import UpdateForm from "./update-form"
 export default class Category extends Component {
     state = {
         loading: true,
@@ -29,7 +31,7 @@ export default class Category extends Component {
                   key: 'x',
                   render: (category) => (
                       <span>
-                          <LinkButton onClick={this.showUpdate}>修改分类</LinkButton>    
+                          <LinkButton onClick={() => this.showUpdate(category)}>修改分类</LinkButton>    
                           {this.state.parentId === '0' ? <LinkButton onClick={ ()=> this.showSubCategory(category)}>查看子分类</LinkButton> : null }   
                       </span>
                   ),
@@ -101,10 +103,26 @@ export default class Category extends Component {
             showStatus: 1
         });
     }
-    showUpdate = () => {
+    showUpdate = (category) => {
+        this.category = category;
         this.setState({
             showStatus: 2
         });
+        
+        
+    }
+    updateCategory = async () => {
+        const category_id = this.category._id;
+        const categoryName = this.form.getFieldValue('name');
+        //清除缓存数据
+        this.form.resetFields()
+
+        //发送更新请求
+        const result = await reqUpdateCategory(category_id,categoryName)
+        if(result.status ===1 ){
+            //重置列表
+            this.getCategorys();
+        }
     }
     render() {
         
@@ -122,6 +140,7 @@ export default class Category extends Component {
                 添加
             </Button>
         )
+        const category = this.category || {};
         return (
             <div>
                 <Card title={title} extra={extra} >
@@ -130,23 +149,19 @@ export default class Category extends Component {
                 </Card>
                 <Modal
                     title="添加"
-                    visible={this.state.showStatus === 1 ? true : false}
+                    visible={this.state.showStatus === 1}
                     onOk={this.handleOk}
                     onCancel={this.handleCancel}
                     >
-                    <p>Some contents...</p>
-                    <p>Some contents...</p>
-                    <p>Some contents...</p>
+                    <AddForm />
                 </Modal>
                 <Modal
                     title="更新"
-                    visible={this.state.showStatus === 2 ? true : false}
-                    onOk={this.handleOk}
+                    visible={this.state.showStatus === 2}
+                    onOk={this.updateCategory}
                     onCancel={this.handleCancel}
                     >
-                    <p>Some contents...</p>
-                    <p>Some contents...</p>
-                    <p>Some contents...</p>
+                    <UpdateForm name={category.name} setForm={(form)=> {this.form = form}}/>
                 </Modal>
             </div>
         )
