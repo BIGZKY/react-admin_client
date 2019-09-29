@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 const { Item } = Form; 
 class UpdateForm extends Component {
     static propTypes = {
-        name: PropTypes.string.isRequired,
+        categoryName: PropTypes.string.isRequired,
         setForm: PropTypes.func.isRequired
     }
     componentDidMount() {
@@ -19,8 +19,8 @@ class UpdateForm extends Component {
                 
                 <Item label="分类名称">
                     {
-                        getFieldDecorator('name',{
-                            initialValue: this.props.name
+                        getFieldDecorator('categoryName',{
+                            initialValue: this.props.categoryName
                         })(
                             <Input placeholder="输入分类名称" />
                         )

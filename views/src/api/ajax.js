@@ -15,11 +15,10 @@
         // 1.执行异步ajax请求
         if(type === 'GET'){ //发GET请求
             promise = axios.get(url, {
-                params: data ,
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                params: data 
             })
         } else {
-            promise = axios.post(url,{headers: {'Content-Type': 'application/x-www-form-urlencoded'},}, data);
+            promise = axios.post(url,data);
         }
         
         //如果成功了, 调用resolve(value);

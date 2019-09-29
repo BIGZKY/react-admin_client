@@ -20,8 +20,8 @@ export default class Category extends Component {
             columns: [
                 {
                   title: '分类名称',
-                  dataIndex: 'name',
-                  key: 'name',
+                  dataIndex: 'categoryName',
+                  key: 'categoryName',
                 },
     
                 {
@@ -74,7 +74,7 @@ export default class Category extends Component {
     showSubCategory = (category) => {
         this.setState({
             parentId: category._id,
-            parentName: category.name
+            parentName: category.categoryName
         }, () => {  // 在状态更新且重新render()后执行
             this.getCategorys();
         })
@@ -113,7 +113,7 @@ export default class Category extends Component {
     }
     updateCategory = async () => {
         const category_id = this.category._id;
-        const categoryName = this.form.getFieldValue('name');
+        const categoryName = this.form.getFieldValue('categoryName');
         //清除缓存数据
         this.form.resetFields()
 
@@ -161,7 +161,7 @@ export default class Category extends Component {
                     onOk={this.updateCategory}
                     onCancel={this.handleCancel}
                     >
-                    <UpdateForm name={category.name} setForm={(form)=> {this.form = form}}/>
+                    <UpdateForm categoryName={category.categoryName} setForm={(form)=> {this.form = form}}/>
                 </Modal>
             </div>
         )
