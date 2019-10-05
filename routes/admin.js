@@ -19,13 +19,12 @@ router.get('/getCategory', function(req, res, next) {
 
 router.post('/updateCategory', function(req, res, next) {
   mongo.then((db)=>{
-    var whereStr = { "_id": req.body.category_id };
-    console.log(whereStr)
-    db.collection("category").update(whereStr,{$set:{name:req.body.categoryName}}).toArray(function(err, result) {
+    var whereStr = { "id": req.body.category_id };
+    var updateStr = {$set: { "categoryName" : req.body.categoryName }};
+    db.collection("category").updateOne(whereStr, updateStr, function(err, result) {
       if (err) throw err;
-      res.send({data:[], status:1, msg: '更新成功'})
+      res.sendStatus(200)
       db.close;
-      
     });
   }).catch((err)=>{
     console.log(err)

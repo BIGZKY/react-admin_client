@@ -25,16 +25,20 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.all('*', function (req, res, next) { 
+app.all('*', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Content-Type","application/json;charset=utf-8")
-  res.header("Cache-Control", "no-store");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With');
+      //这段仅仅为了方便返回json而已
+  res.header("Content-Type", "application/json;charset=utf-8");
   if(req.method == 'OPTIONS') {
-    res.sendStatus(200).end();
-  }else{
-    next();
+      //让options请求快速返回
+      res.send(200);
+  } else { 
+      next(); 
   }
-})
+});
 
 
 app.use('/', indexRouter);
