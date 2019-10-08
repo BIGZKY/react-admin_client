@@ -1,8 +1,8 @@
 import React, { Component } from "react"
-import {Card, Table, Button, Icon, message, Modal} from 'antd'
+import {Card, Table, Button, Icon, message, Modal, Popconfirm} from 'antd'
 
 import LinkButton from '../../components/link-button/link-button'
-import { reqCategorys, reqUpdateCategory } from "../../api"
+import { reqCategorys, reqUpdateCategory, reqInsertCategory, reqDelCategory} from "../../api"
 import AddForm from "./add-form"
 import UpdateForm from "./update-form"
 export default class Category extends Component {
@@ -32,7 +32,12 @@ export default class Category extends Component {
                   render: (category) => (
                       <span>
                           <LinkButton onClick={() => this.showUpdate(category)}>修改分类</LinkButton>    
+                          <Popconfirm placement="topLeft" title="是否删除分类" onConfirm={() => this.delCategory(category)} okText="Yes" cancelText="No">
+                            <LinkButton>删除分类</LinkButton>  
+                          </Popconfirm>
+                          
                           {this.state.parentId === '0' ? <LinkButton onClick={ ()=> this.showSubCategory(category)}>查看子分类</LinkButton> : null }   
+
                       </span>
                   ),
                 },
@@ -45,6 +50,18 @@ export default class Category extends Component {
     componentWillMount() {
         this.initColumns(); 
     }
+
+    /**
+     * 删除分类
+     */
+    delCategory = async (category) => {
+        const result = await reqDelCategory(category._id)
+        if(result.status ===1 ){
+            //重置列表
+            this.getCategorys();
+        }
+    }
+
     /**
      * 异步获取一级分类列表显示
      */
@@ -93,7 +110,6 @@ export default class Category extends Component {
     };
 
     handleCancel = e => {
-        console.log(e);
         this.setState({
             showStatus: 0
         });
@@ -122,8 +138,26 @@ export default class Category extends Component {
         if(result.status ===1 ){
             //重置列表
             this.getCategorys();
+            this.handleCancel()
         }
     }
+    addCategory = async () => {
+        const category_id = this.form.getFieldValue('category_id');
+        const categoryName = this.form.getFieldValue('categoryName');
+
+        //清除缓存数据
+        this.form.resetFields();
+        
+        //发送插入数据请求
+        const result = await reqInsertCategory(category_id, categoryName)
+
+        if(result.status ===1 ){
+            //重置列表
+            this.getCategorys();
+            this.handleCancel()
+        }
+    }
+
     render() {
         
         const {parentId, categorys, parentName, subCategorys} = this.state;
@@ -144,16 +178,17 @@ export default class Category extends Component {
         return (
             <div>
                 <Card title={title} extra={extra} >
-                    <Table bordered dataSource={parentId === '0' ? categorys : subCategorys} columns={this.state.columns} rowKey='key' loading={this.state.loading}/>;
+                    <Table bordered dataSource={parentId === '0' ? categorys : subCategorys} columns={this.state.columns} rowKey='_id' loading={this.state.loading}/>;
             
                 </Card>
                 <Modal
                     title="添加"
                     visible={this.state.showStatus === 1}
-                    onOk={this.handleOk}
+                    onOk={this.addCategory}
                     onCancel={this.handleCancel}
+                    
                     >
-                    <AddForm />
+                    <AddForm categoryList={this.state.categorys} setForm={(form)=> {this.form = form}}/>
                 </Modal>
                 <Modal
                     title="更新"

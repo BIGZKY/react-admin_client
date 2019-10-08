@@ -37,4 +37,10 @@ export const reqWeather = (city) => {
 export const reqCategorys = (parentId) => ajax(BASE+'/admin/getCategory',{parentId});
 
 //更新分类
-export const reqUpdateCategory = (category_id,categoryName) => ajax(BASE+'/admin/updateCategory',{category_id,categoryName},'POST');
+export const reqUpdateCategory = (category_id, categoryName) => ajax(BASE+'/admin/updateCategory',{category_id,categoryName},'POST');
+
+//插入分类
+export const reqInsertCategory = (category_id, categoryName) => ajax(BASE+'/admin/insertCategory',{category_id,categoryName},'POST');
+
+//删除分类
+export const reqDelCategory = (category_id) => ajax(BASE+'/admin/delCategory',{category_id},'POST')

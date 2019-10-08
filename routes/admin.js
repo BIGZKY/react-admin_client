@@ -1,4 +1,5 @@
 var express = require('express');
+var ObjectID = require('mongodb').ObjectID;
 var router = express.Router();
 
 var {mongo} = require('../config/index');
@@ -19,11 +20,11 @@ router.get('/getCategory', function(req, res, next) {
 
 router.post('/updateCategory', function(req, res, next) {
   mongo.then((db)=>{
-    var whereStr = { "id": req.body.category_id };
+    var whereStr = { "_id": ObjectID(req.body.category_id) };
     var updateStr = {$set: { "categoryName" : req.body.categoryName }};
     db.collection("category").updateOne(whereStr, updateStr, function(err, result) {
       if (err) throw err;
-      res.sendStatus(200)
+      res.send({data:[], status:1, msg: '更改成功'})
       db.close;
     });
   }).catch((err)=>{
@@ -31,4 +32,35 @@ router.post('/updateCategory', function(req, res, next) {
   })
 });
   
+router.post('/insertCategory', function(req, res, next) {
+  mongo.then((db)=>{
+    var insertStr = { 
+      categoryName: req.body.categoryName,
+      parentId: req.body.category_id,
+    };
+    
+    db.collection("category").insert(insertStr, function(err, result) {
+      if (err) throw err;
+      res.send({data:[], status:1, msg: '插入成功'})
+      db.close;
+    });
+  }).catch((err)=>{
+    console.log(err)
+  })
+});
+
+router.post('/delCategory', function(req, res, next) {
+  mongo.then((db)=>{
+    var whereStr = { "_id": ObjectID(req.body.category_id) };
+    
+    db.collection("category").deleteOne(whereStr, function(err, result) {
+      if (err) throw err;
+      res.send({data:[], status:1, msg: '删除成功'})
+      db.close;
+    });
+  }).catch((err)=>{
+    console.log(err)
+  })
+});
+
 module.exports = router;

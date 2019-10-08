@@ -8,7 +8,6 @@ class UpdateForm extends Component {
         setForm: PropTypes.func.isRequired
     }
     componentDidMount() {
-        console.log(this.props.form)
         this.props.setForm(this.props.form);
     }
     render() {
