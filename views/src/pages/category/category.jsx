@@ -65,8 +65,9 @@ export default class Category extends Component {
     /**
      * 异步获取一级分类列表显示
      */
-    getCategorys = async () => {
-        const {parentId} = this.state;
+    getCategorys = async (parentId) => {
+        parentId = parentId || this.state.parentId;
+
         const result = await reqCategorys(parentId);
         if(result.status===1){
             if(parentId === '0'){
@@ -127,35 +128,46 @@ export default class Category extends Component {
         
         
     }
-    updateCategory = async () => {
-        const category_id = this.category._id;
-        const categoryName = this.form.getFieldValue('categoryName');
-        //清除缓存数据
-        this.form.resetFields()
+    updateCategory = () => {
+        this.form.validateFields(async (err, values) => {
+            if(!err){
+                const category_id = this.category._id;
+                const {categoryName} = values;
+                //清除缓存数据
+                this.form.resetFields()
 
-        //发送更新请求
-        const result = await reqUpdateCategory(category_id,categoryName)
-        if(result.status ===1 ){
-            //重置列表
-            this.getCategorys();
-            this.handleCancel()
-        }
-    }
-    addCategory = async () => {
-        const category_id = this.form.getFieldValue('category_id');
-        const categoryName = this.form.getFieldValue('categoryName');
-
-        //清除缓存数据
-        this.form.resetFields();
+                //发送更新请求
+                const result = await reqUpdateCategory(category_id,categoryName)
+                if(result.status ===1 ){
+                    //重置列表
+                    this.getCategorys();
+                    this.handleCancel()
+                }
+            }
+        })
         
-        //发送插入数据请求
-        const result = await reqInsertCategory(category_id, categoryName)
-
-        if(result.status ===1 ){
-            //重置列表
-            this.getCategorys();
-            this.handleCancel()
-        }
+    }
+    addCategory = () => {
+        this.form.validateFields(async (err, values) => {
+            if(!err){
+                const {parentId, categoryName} = values
+                //清除缓存数据
+                this.form.resetFields();
+                
+                //发送插入数据请求
+                const result = await reqInsertCategory(parentId, categoryName)
+                
+                //选择添加的分类 是当前分类
+                if(this.state.parentId === parentId ){
+                    //重新获取分类列表
+                    this.getCategorys();
+                }else if(parentId==='0'){
+                    this.getCategorys(parentId);
+                }
+                this.handleCancel();
+            }
+        })
+        
     }
 
     render() {
@@ -188,7 +200,7 @@ export default class Category extends Component {
                     onCancel={this.handleCancel}
                     
                     >
-                    <AddForm categoryList={this.state.categorys} setForm={(form)=> {this.form = form}}/>
+                    <AddForm categoryList={this.state.categorys} setForm={(form)=> {this.form = form}} parentId={this.state.parentId}/>
                 </Modal>
                 <Modal
                     title="更新"
