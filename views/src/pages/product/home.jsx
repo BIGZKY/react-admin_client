@@ -3,27 +3,30 @@ import {Icon, Select, Input, Card, Table, Button} from 'antd'
 
 import LinkButton from "../../components/link-button/link-button";
 import {reqProducts, reqAddProduct} from '../../api/index'
+import { PAGE_SIZE } from '../../utils/constans'
 const {Option} = Select
 export default class ProductHome extends Component {
     state = {
+        total: 0,
         products: []
     }
     componentWillMount() {
         this.initColumns()
     }
     componentDidMount() {
-        this.getProducts()
+        this.getProducts(1)
         // this.addProduct()
     }
     addProduct = async() => {
         let res = await reqAddProduct();
     }
-    getProducts = async () => {
-        let res = await reqProducts();
+    getProducts = async (page) => {
+        let res = await reqProducts(page, PAGE_SIZE);
         console.log(res);
         if(res.status==1){
             this.setState({
-                products: res.data
+                products: res.data.docs,
+                total: res.data.total
             })
         }
     }
@@ -72,7 +75,7 @@ export default class ProductHome extends Component {
         })
     }
     render() {
-        const {products, columns, loading} = this.state;
+        const {products, columns, loading, total} = this.state;
         const title = (
             <span >
                 <Select value="1" style={{width:150}}>
@@ -91,7 +94,18 @@ export default class ProductHome extends Component {
         )
         return (
             <Card title={title} extra={extra}>
-                <Table bordered dataSource={products} columns={columns} loading={loading} rowKey="_id"></Table>
+                <Table bordered 
+                    dataSource={products} 
+                    columns={columns} 
+                    loading={loading} 
+                    rowKey="_id"
+                    pagination={{
+                        total,
+                        defaultPageSize: PAGE_SIZE,
+                        showQuickJumper: true,
+                        onChange: this.getProducts
+                    }}
+                ></Table>
             </Card>
         )
     }
