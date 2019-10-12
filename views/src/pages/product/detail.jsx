@@ -2,11 +2,39 @@ import React, { Component } from "react"
 import {Card, List, Button, Icon} from "antd"
 import Item from "antd/lib/list/Item"
 
+import {reqCategory} from '../../api/index'
 export default class Detail extends Component {
+    state = {
+        pName: '',
+        cName: '' 
+    }
+    async componentDidMount() {
+        const product = this.props.location.state;
+        let res ;
+        if(product.pCategoryId==0){
+            res = await reqCategory(product.categoryId);
+            
+        }else{
+            // res = await reqCategory(product.categoryId);
+            res = await Promise.all([reqCategory(product.categoryId), reqCategory(product.pCategoryId)])
+            console.log(res)
+            this.setState({
+                cName: res[0].data[0].categoryName,
+                pName: res[1].data[0].categoryName
+            })
+        }
+    }
     render() {
+        const product = this.props.location.state;
+        const {pName, cName} = this.state;
         const title = (
             <span>
-                <Icon type='arrow-left'></Icon>
+                <Icon 
+                    type='arrow-left' 
+                    style={{color: 'green', marginRight: 15, fontSize:16, cursor: 'pointer'}}
+                    onClick={() => this.props.history.goBack()}
+                    >  
+                </Icon>
                 <span>商品详情</span>
             </span>
         )
@@ -15,26 +43,30 @@ export default class Detail extends Component {
                 <List>
                     <Item>
                         <span className="left">商品名称: </span>
-                        <span>联想ThinkPad 翼480</span>
+                        <span>{product.name}</span>
                     </Item>
                     <Item>
                         <span className="left">商品描述: </span>
-                        <span>年度重量级新品, X390、T490全新登场 更加轻薄机身设计</span>
+                        <span>{product.desc}</span>
                     </Item>
                     <Item>
                         <span className="left">所属分类: </span>
-                        <span>电脑 --> 笔记本</span>
+                        <span>{pName }{pName ? '-->' + cName : ''}</span>
                     </Item>
                     <Item>
                         <span className="left">商品图片: </span>
                         <span>
-                            <img className="product-img" src="https://img11.360buyimg.com/n7/jfs/t1/74274/16/2371/233375/5d099429E25d545c3/162fbb8724aa6590.jpg" alt="img"/>
-                            <img className="product-img" src="https://img13.360buyimg.com/n7/jfs/t1/26724/31/14294/123936/5ca56c4aE4f21b041/d438f7b5b7214056.jpg" alt="img"/>
+                            {
+                                product.imgs.map((img) => (
+
+                                    <img src={img} key={img} alt=""/>
+                                ))
+                            }
                         </span>
                     </Item>
                     <Item>
                         <span className="left">商品详情: </span>
-                        <span dangerouslySetInnerHTML={{__html: '<h1 style="color: red">商品详情的展示</h1>'}}></span>
+                        <span dangerouslySetInnerHTML={{__html: product.detail}}></span>
                     </Item>
                 </List>
             </Card>    

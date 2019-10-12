@@ -1,5 +1,5 @@
 import React, { Component } from "react"
-import {Icon, Select, Input, Card, Table, Button} from 'antd'
+import {Icon, Select, Input, Card, Table, Button, message} from 'antd'
 
 import LinkButton from "../../components/link-button/link-button";
 import {reqProducts, reqAddProduct} from '../../api/index'
@@ -8,7 +8,10 @@ const {Option} = Select
 export default class ProductHome extends Component {
     state = {
         total: 0,
-        products: []
+        products: [],
+        loading:true,
+        searchType: '0',
+        searchStr: ''
     }
     componentWillMount() {
         this.initColumns()
@@ -21,14 +24,29 @@ export default class ProductHome extends Component {
         let res = await reqAddProduct();
     }
     getProducts = async (page) => {
-        let res = await reqProducts(page, PAGE_SIZE);
-        console.log(res);
+        let res ;
+        if(this.state.searchStr){
+            res = await reqProducts(page, PAGE_SIZE, this.state.searchStr, this.state.searchType);
+        }else{
+            res = await reqProducts(page, PAGE_SIZE);
+        }
+        
         if(res.status==1){
             this.setState({
                 products: res.data.docs,
-                total: res.data.total
+                total: res.data.total,
+                loading: false
             })
         }
+    }
+    clickSerch = () => {
+        if(this.state.searchStr){
+            this.getProducts();
+        }else{
+            message.error('请输入搜索关键词')
+        }
+
+        
     }
     initColumns() {
         this.setState({
@@ -66,7 +84,7 @@ export default class ProductHome extends Component {
                         return (
                             <span>
                                 <LinkButton>修改</LinkButton>
-                                <LinkButton>删除</LinkButton>
+                                <LinkButton onClick={() => {this.props.history.push('/product/detail',product)}}>详情</LinkButton>
                             </span>
                         )
                     }
@@ -75,15 +93,15 @@ export default class ProductHome extends Component {
         })
     }
     render() {
-        const {products, columns, loading, total} = this.state;
+        const {products, columns, loading, total, searchType, searchStr} = this.state;
         const title = (
             <span >
-                <Select value="1" style={{width:150}}>
-                    <Option value="1">按名称搜索</Option>
-                    <Option value="2">按描述搜索</Option>
+                <Select value={searchType} style={{width:150}} onChange={(value) => this.setState({searchType: value})}>
+                    <Option value="0">按名称搜索</Option>
+                    <Option value="1">按描述搜索</Option>
                 </Select>
-                <Input placeholder="按关键字搜索" style={{width:250, margin:'0 15px'}}></Input>
-                <Button type="primary">搜索</Button>
+                <Input placeholder="按关键字搜索" style={{width:250, margin:'0 15px'}} value={searchStr} onChange={(e) =>  this.setState({searchStr: e.target.value})}></Input>
+                <Button type="primary" onClick={() => this.clickSerch()}>搜索</Button>
             </span>
         )
         const extra = (

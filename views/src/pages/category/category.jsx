@@ -190,7 +190,7 @@ export default class Category extends Component {
         return (
             <div>
                 <Card title={title} extra={extra} >
-                    <Table bordered dataSource={parentId === '0' ? categorys : subCategorys} columns={this.state.columns} rowKey='_id' loading={this.state.loading}/>;
+                    <Table bordered dataSource={parentId === '0' ? categorys : subCategorys} columns={this.state.columns} rowKey='_id' loading={this.state.loading}/>
             
                 </Card>
                 <Modal

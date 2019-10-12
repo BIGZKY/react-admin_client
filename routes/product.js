@@ -7,12 +7,22 @@ var Product = require('../config/product.js');
 router.get('/',function (req, res, next) {
     var pageSize = parseInt(req.query.pageSize);
     var page = req.query.page;
-    console.log()
-    Product.paginate({},{page: page, limit: pageSize}, function(err, result){
-        if(err) return console.error(err);
-        console.log(result)
-        res.send({data:result,status:1,msg:'查询成功'})
-    })
+    var searchStr = req.query.searchStr;
+    var searchType = req.query.searchType;
+    searchType == 0 ? searchType='name' : searchType='desc';
+    if(searchStr){
+        Product.paginate({[searchType]: {$regex:searchStr}},{page: page, limit: pageSize}, function(err, result){
+            if(err) return console.error(err);
+            res.send({data:result,status:1,msg:'查询成功'})
+        })
+    }else{
+        Product.paginate({},{page: page, limit: pageSize}, function(err, result){
+            if(err) return console.error(err);
+            res.send({data:result,status:1,msg:'查询成功'})
+        })
+    }
+    
+    
 })
 router.get('/addProduct',function (req, res, next) { 
     var product = new Product({

@@ -31,6 +31,21 @@ router.post('/updateCategory', function(req, res, next) {
     console.log(err)
   })
 });
+ 
+router.get('/category', function(req, res, next) {
+  mongo.then((db)=>{
+    var whereStr = { "_id": ObjectID(req.query.category_id) };
+
+    db.collection("category").find(whereStr).toArray(function(err, result) {
+      if (err) throw err;
+      res.send({data:result, status:1, msg: '查询成功'})
+      db.close;
+      
+    });
+  }).catch((err)=>{
+    console.log(err)
+  })
+});
   
 router.post('/insertCategory', function(req, res, next) {
   mongo.then((db)=>{
