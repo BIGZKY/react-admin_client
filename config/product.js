@@ -13,4 +13,4 @@ var ProductSchema = new Schema({
     detail: String
 })
 ProductSchema.plugin(mongoosePaginate);
-module.exports = mongoose.model('Products', ProductSchema)
+module.exports = mongoose.model('products', ProductSchema)

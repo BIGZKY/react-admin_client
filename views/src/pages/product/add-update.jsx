@@ -14,6 +14,7 @@ import {
 import "./add-update.less";
 import LinkButton from "../../components/link-button/link-button";
 import {reqCategorys} from '../../api'
+import PicturesWall from './picturesWall'
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -34,14 +35,14 @@ class AddUpdate extends Component {
     loadData = async selectedOptions => {
       //得到选择的option 对象
       const targetOption = selectedOptions[0];
+      this.targetOption = targetOption
       //显示loading
       targetOption.loading = true;
-
-      console.log(targetOption)
       //请求异步获取
       const result = await this.reqCategorys(targetOption.value);
       targetOption.loading = false;
-      if(result && result.length>0){
+      //二级分类
+      if(result && result.length>0){  
         let subOptions = result.map((c) => ({
           value: c._id,
           label: c.categoryName,
@@ -50,7 +51,6 @@ class AddUpdate extends Component {
         targetOption.children = subOptions
       }else{
         targetOption.isLeaf = true;
-        
       }
       this.setState({
         options: [...this.state.options]
@@ -60,21 +60,51 @@ class AddUpdate extends Component {
     componentDidMount() {
       this.reqCategorys('0')
     }
+    componentWillMount() {
+      const product = this.props.location.state;
+      this.product = product;
+      //判断是否是更新
+      this.isUpdate = !!product;
+      this.categorys = [];
+      this.categorys.push(product.categoryId);
+      if(this.isUpdate){
+        this.categorys.unshift(product.pCategoryId);
+      }
+      //避免product为空
+      this.product = product || {}
+    }
+
     reqCategorys = async (parentId) => {
       const result = await reqCategorys(parentId); 
-      let options;
-      if(parentId==='0'){
-        options = result.data.map((c) => ({
-          value: c._id,
-          label: c.categoryName,
-          isLeaf: false
-        }))
-        this.setState({
-          options
-        })
+      if(parentId==='0'){ 
+        this.initOPtions(result.data);
       }else{
         return result.data;
       }
+    }
+    initOPtions =async (data) => {
+      let options;
+      options = data.map((c) => ({
+        value: c._id,
+        label: c.categoryName,
+        isLeaf: false
+      }))
+      const {isUpdate, product} = this;
+      const {pCategoryId, categoryId} = product;
+      if(isUpdate && pCategoryId!=0){
+        
+        const subCategorys = await this.reqCategorys(pCategoryId);
+        let subOptions = subCategorys.map((c) => ({
+          value: c._id,
+          label: c.categoryName,
+          isLeaf: true
+        }))
+        let targetOption = options.find((option) => option.value === pCategoryId)
+        targetOption.children = subOptions
+      }
+      this.setState({
+        options: options
+      })
     }
     /**
      * 对价格自定义验证
@@ -117,6 +147,7 @@ class AddUpdate extends Component {
           labelCol: { span: 2 },
           wrapperCol: { span: 8 },
         };
+        const {isUpdate, product, categorys} = this;
         const title = (
             <span>
                 <Icon 
@@ -125,7 +156,7 @@ class AddUpdate extends Component {
                     onClick={() => this.props.history.goBack()}
                     >  
                 </Icon>
-                <span>商品详情</span>
+                <span>{isUpdate ? '商品详情' : '添加商品'}</span>
             </span>
         )
         const uploadButton = (
@@ -134,7 +165,8 @@ class AddUpdate extends Component {
               <div className="ant-upload-text">Upload</div>
             </div>
           )
-          const { previewVisible, previewImage, fileList } = this.state;
+        const { previewVisible, previewImage, fileList } = this.state;
+        
         return (
             
             <Card title={title}>
@@ -147,6 +179,7 @@ class AddUpdate extends Component {
                                 message: '请输入商品名称',
                             },
                             ],
+                            initialValue: product.name
                         })(<Input placeholder="请输入商品名称" />)}
                     </Form.Item>
                     <Form.Item {...formItemLayout} label="商品描述">
@@ -157,7 +190,8 @@ class AddUpdate extends Component {
                                 message: '请输入商品描述',
                             },
                             ],
-                        })(<TextArea placeholder="Autosize height based on content lines" autosize />)}
+                            initialValue: product.desc
+                        })(<TextArea placeholder="请输入商品描述" autosize />)}
                     </Form.Item>
                     <Form.Item {...formItemLayout} label="商品价格">
                         {getFieldDecorator('price', {
@@ -168,17 +202,20 @@ class AddUpdate extends Component {
                             },
                             {validator: this.validatorPrice}
                             ],
-                            initialValue: 1,
-                        })(<Input type='number' min={1} max={10} onChange={this.changeValue} addonAfter="元"/>)}
+                            placeholder: '请输入商品价格',
+                            initialValue: product.price,
+                        })(<Input type='number' onChange={this.changeValue} addonAfter="元"/>)}
                     </Form.Item>
 
                     <Form.Item label="商品分类">
                         {getFieldDecorator('category', {
                             rules: [{ required: true, message: '请选择商品分类!' }],
+                            initialValue: categorys
                         })(
                           <Cascader
                             options={this.state.options} 
                             loadData={this.loadData}
+                            placeholder="请选择分类"
                           >
                           </Cascader>
                         )}
@@ -188,20 +225,7 @@ class AddUpdate extends Component {
         
                         getValueFromEvent: this.normFile,
                     })(
-                        <div className="clearfix">
-                        <Upload
-                        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                        listType="picture-card"
-                        fileList={fileList}
-                        onPreview={this.handlePreview}
-                        onChange={this.handleChange}
-                        >
-                        {fileList.length >= 8 ? null : uploadButton}
-                        </Upload>
-                        <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
-                        <img alt="example" style={{ width: '100%' }} src={previewImage} />
-                        </Modal>
-                    </div>
+                        <PicturesWall></PicturesWall>
                     )}
                     </Form.Item>
                     <Form.Item wrapperCol={{ span: 6, offset: 2 }}>
