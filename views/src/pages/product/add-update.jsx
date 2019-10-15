@@ -67,6 +67,7 @@ class AddUpdate extends Component {
       this.isUpdate = !!product;
       this.categorys = [];
       this.categorys.push(product.categoryId);
+      console.log(product)
       if(this.isUpdate){
         this.categorys.unshift(product.pCategoryId);
       }
@@ -94,6 +95,7 @@ class AddUpdate extends Component {
       if(isUpdate && pCategoryId!=0){
         
         const subCategorys = await this.reqCategorys(pCategoryId);
+        
         let subOptions = subCategorys.map((c) => ({
           value: c._id,
           label: c.categoryName,

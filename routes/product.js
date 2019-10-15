@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var ObjectID = require('mongodb').ObjectID;
+var upload = require('jquery-file-upload-middleware');
 
 var Product = require('../config/product.js');
-
+var app = express();
 router.get('/',function (req, res, next) {
     var pageSize = parseInt(req.query.pageSize);
     var page = req.query.page;
@@ -43,6 +44,20 @@ router.get('/addProduct',function (req, res, next) {
         res.send({data:[],status:1,msg:'插入成功'})
     })
 })
+//上传图片
+router.post('/uploads', function(req, res, next){
+    upload.fileHandler({
+        uploadDir: function () {
+
+            return 'public/uploads/'
+        },
+        uploadUrl: function () {
+            return '/uploads'
+        }
+    });
+    console.log(upload.uploadDir)
+    res.send({data:[],status:1,msg:'上传成功'})
+});
 
 module.exports = router;
 

@@ -52,9 +52,9 @@ export default class PicturesWall extends React.Component {
     return (
       <div className="clearfix">
         <Upload
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+          action="http://localhost:3001/product/uploads"
           listType="picture-card"
-          name="img"
+          name="c"
           fileList={fileList}
           onPreview={this.handlePreview}
           onChange={this.handleChange}
