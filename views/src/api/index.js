@@ -52,4 +52,9 @@ export const reqCategory = (category_id) => ajax(BASE + '/admin/category', {cate
 export const reqProducts = (page, pageSize, searchStr, searchType) => ajax(BASE+'/product', {page, pageSize, searchStr, searchType});
 
 //添加商品
-export const reqAddProduct = () => ajax(BASE+'/product/addProduct');
+export const reqAddProduct = (values) => ajax(BASE+'/product/addProduct', {values}, 'POST');
+
+//更新商品
+export const reqUpdateProduct = (_id, values) => ajax(BASE+'/product/updateProduct', {_id ,values}, 'POST')
+
+//删除

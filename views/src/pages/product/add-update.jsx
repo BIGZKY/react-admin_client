@@ -8,17 +8,22 @@ import {
     Card,
     Upload,
     Modal,
-    Cascader
+    Cascader,
+    message
   } from 'antd';
 
 import "./add-update.less";
 import LinkButton from "../../components/link-button/link-button";
-import {reqCategorys} from '../../api'
+import {reqCategorys, reqUpdateProduct, reqAddProduct} from '../../api'
 import PicturesWall from './picturesWall'
 const { TextArea } = Input;
 const { Option } = Select;
 
 class AddUpdate extends Component {
+    constructor(props) {
+      super(props);
+      this.picturesWall = React.createRef();
+    }
     state = {
         previewVisible: false,
         previewImage: '',
@@ -66,10 +71,9 @@ class AddUpdate extends Component {
       //判断是否是更新
       this.isUpdate = !!product;
       this.categorys = [];
-      this.categorys.push(product.categoryId);
-      console.log(product)
       if(this.isUpdate){
-        this.categorys.unshift(product.pCategoryId);
+        this.categorys.push(product.pCategoryId);
+        this.categorys.push(product.categoryId);
       }
       //避免product为空
       this.product = product || {}
@@ -118,127 +122,125 @@ class AddUpdate extends Component {
         callback('价格必须大于0');
       }
     }
-    handleCancel = () => this.setState({ previewVisible: false })
 
-    handlePreview = async file => {
-    //   if (!file.url && !file.preview) {
-    //     file.preview = await getBase64(file.originFileObj);
-    //   }
-  
-      this.setState({
-        previewImage: file.url || file.preview,
-        previewVisible: true,
-      });
-    }
-    
-    handleChange = ({ fileList }) => this.setState({ fileList })
     handleSubmit = e => {
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-          if (!err) {
-            console.log('Received values of form: ', values);
+      e.preventDefault();
+      this.props.form.validateFields(async (err, values) => {
+        if (!err) { 
+          let imgs = this.picturesWall.current.getImgsPath();
+          values.imgs = imgs;
+          let result
+          if(this.isUpdate){
+            values.status = this.product.status
+            result = await reqUpdateProduct(this.product._id, values);
+            if(result.status === 1){
+              message.success('更新成功')
+            }
+            console.log(result);
+          }else{
+            values.status = 0;
+            result = await reqAddProduct(values);
+            if(result.status === 1){
+              message.success('添加成功')
+            }
           }
-        });
-      };
-      changeValue = (value) => {
-        console.log(value);
-      }
-      render() {
-        const { getFieldDecorator } = this.props.form;
-        const formItemLayout = {
-          labelCol: { span: 2 },
-          wrapperCol: { span: 8 },
-        };
-        const {isUpdate, product, categorys} = this;
-        const title = (
-            <span>
-                <Icon 
-                    type='arrow-left' 
-                    style={{color: 'green', marginRight: 15, fontSize:16, cursor: 'pointer'}}
-                    onClick={() => this.props.history.goBack()}
-                    >  
-                </Icon>
-                <span>{isUpdate ? '商品详情' : '添加商品'}</span>
-            </span>
-        )
-        const uploadButton = (
-            <div>
-              <Icon type="plus" />
-              <div className="ant-upload-text">Upload</div>
-            </div>
-          )
-        const { previewVisible, previewImage, fileList } = this.state;
-        
-        return (
-            
-            <Card title={title}>
-                <Form {...formItemLayout} onSubmit={this.handleSubmit}>
-                    <Form.Item {...formItemLayout} label="商品名称">
-                        {getFieldDecorator('name', {
-                            rules: [
-                            {
-                                required: true,
-                                message: '请输入商品名称',
-                            },
-                            ],
-                            initialValue: product.name
-                        })(<Input placeholder="请输入商品名称" />)}
-                    </Form.Item>
-                    <Form.Item {...formItemLayout} label="商品描述">
-                        {getFieldDecorator('desc', {
-                            rules: [
-                            {
-                                required: true,
-                                message: '请输入商品描述',
-                            },
-                            ],
-                            initialValue: product.desc
-                        })(<TextArea placeholder="请输入商品描述" autosize />)}
-                    </Form.Item>
-                    <Form.Item {...formItemLayout} label="商品价格">
-                        {getFieldDecorator('price', {
-                            rules: [
-                            {
-                                required: true,
-                                message: '请输入商品价格',
-                            },
-                            {validator: this.validatorPrice}
-                            ],
-                            placeholder: '请输入商品价格',
-                            initialValue: product.price,
-                        })(<Input type='number' onChange={this.changeValue} addonAfter="元"/>)}
-                    </Form.Item>
-
-                    <Form.Item label="商品分类">
-                        {getFieldDecorator('category', {
-                            rules: [{ required: true, message: '请选择商品分类!' }],
-                            initialValue: categorys
-                        })(
-                          <Cascader
-                            options={this.state.options} 
-                            loadData={this.loadData}
-                            placeholder="请选择分类"
-                          >
-                          </Cascader>
-                        )}
-                    </Form.Item>
-                    <Form.Item label="商品图片" extra="">
-                    {getFieldDecorator('upload', {
-        
-                        getValueFromEvent: this.normFile,
-                    })(
-                        <PicturesWall></PicturesWall>
-                    )}
-                    </Form.Item>
-                    <Form.Item wrapperCol={{ span: 6, offset: 2 }}>
-                      <Button type="primary" htmlType="submit" >
-                          提交
-                      </Button>
-                    </Form.Item>
-                </Form>
-            </Card>
           
-        );
+          console.log('Received values of form: ', values);
+        }
+      });
+    };
+    changeValue = (value) => {
+      console.log(value);
+    }
+    render() {
+      const { getFieldDecorator } = this.props.form;
+      const formItemLayout = {
+        labelCol: { span: 2 },
+        wrapperCol: { span: 8 },
+      };
+      const {isUpdate, product, categorys} = this;
+      const title = (
+          <span>
+              <Icon 
+                  type='arrow-left' 
+                  style={{color: 'green', marginRight: 15, fontSize:16, cursor: 'pointer'}}
+                  onClick={() => this.props.history.goBack()}
+                  >  
+              </Icon>
+              <span>{isUpdate ? '商品更新' : '添加商品'}</span>
+          </span>
+      )
+      const uploadButton = (
+          <div>
+            <Icon type="plus" />
+            <div className="ant-upload-text">Upload</div>
+          </div>
+        )
+      return (
+          
+          <Card title={title}>
+              <Form {...formItemLayout} onSubmit={this.handleSubmit}>
+                  <Form.Item {...formItemLayout} label="商品名称">
+                      {getFieldDecorator('name', {
+                          rules: [
+                          {
+                              required: true,
+                              message: '请输入商品名称',
+                          },
+                          ],
+                          initialValue: product.name
+                      })(<Input placeholder="请输入商品名称" />)}
+                  </Form.Item>
+                  <Form.Item {...formItemLayout} label="商品描述">
+                      {getFieldDecorator('desc', {
+                          rules: [
+                          {
+                              required: true,
+                              message: '请输入商品描述',
+                          },
+                          ],
+                          initialValue: product.desc
+                      })(<TextArea placeholder="请输入商品描述" autosize />)}
+                  </Form.Item>
+                  <Form.Item {...formItemLayout} label="商品价格">
+                      {getFieldDecorator('price', {
+                          rules: [
+                          {
+                              required: true,
+                              message: '请输入商品价格',
+                          },
+                          {validator: this.validatorPrice}
+                          ],
+                          placeholder: '请输入商品价格',
+                          initialValue: product.price,
+                      })(<Input type='number' onChange={this.changeValue} addonAfter="元"/>)}
+                  </Form.Item>
+
+                  <Form.Item label="商品分类">
+                      {getFieldDecorator('category', {
+                          rules: [{ required: true, message: '请选择商品分类!' }],
+                          initialValue: categorys
+                      })(
+                        <Cascader
+                          options={this.state.options} 
+                          loadData={this.loadData}
+                          placeholder="请选择分类"
+                        >
+                        </Cascader>
+                      )}
+                  </Form.Item>
+                  <Form.Item label="商品图片" extra="" wrapperCol={{ span: 20}}>
+                    <PicturesWall ref={this.picturesWall} imgs={isUpdate ? product.imgs : []}></PicturesWall>
+                  </Form.Item>
+                  <Form.Item wrapperCol={{ span: 6, offset: 2 }}>
+                    <Button type="primary" htmlType="submit" >
+                        提交
+                    </Button>
+                  </Form.Item>
+              </Form>
+          </Card>
+        
+      );
     }
 }
 

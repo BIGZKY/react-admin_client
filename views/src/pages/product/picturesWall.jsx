@@ -1,6 +1,7 @@
 import React, { Component } from "react"
-import { Upload, Icon, Modal } from 'antd';
+import { Upload, Icon, Modal, message } from 'antd';
 
+import { BASE_URL } from "../../utils/constans";
 function getBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -14,15 +15,22 @@ export default class PicturesWall extends React.Component {
   state = {
     previewVisible: false,
     previewImage: '',
-    fileList: [
-      {
-        uid: '-1',
-        name: 'image.png',
-        status: 'done',
-        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      },
-    ],
+    fileList: [],
   };
+
+  componentWillMount() {
+    let imgs = this.props.imgs;
+
+    let fileList = imgs.map((img, index) => ({
+      uid: 0 - (index+1) + '',
+      name: 'image.png',
+      status: 'done',
+      url: BASE_URL+img
+    }))
+    this.setState({
+      fileList
+    })
+  }
 
   handleCancel = () => this.setState({ previewVisible: false });
 
@@ -36,10 +44,31 @@ export default class PicturesWall extends React.Component {
       previewVisible: true,
     });
   };
-
+  /**
+   * file 当前操作的额图片对象
+   * fileList  图片列表
+   */
   handleChange = ({file, fileList }) => {
-    console.log(file)
+    if(file.status === 'done'){
+      const result = file.response;
+      console.log(file)
+      if(result.status === 1){
+        message.success('图片上传成功');
+        file = fileList[fileList.length-1];
+        file.url = result.data.path;
+      }else{
+        message.error('图片上传失败')
+      }
+    }
+    this.setState({
+      fileList
+    })
   };
+
+  //获取图片地址列表
+  getImgsPath = () => {
+    return this.state.fileList.map((file) => file.url)
+  }
 
   render() {
     const { previewVisible, previewImage, fileList } = this.state;
@@ -54,7 +83,7 @@ export default class PicturesWall extends React.Component {
         <Upload
           action="http://localhost:3001/product/uploads"
           listType="picture-card"
-          name="c"
+          name="productImg"
           fileList={fileList}
           onPreview={this.handlePreview}
           onChange={this.handleChange}
