@@ -46,7 +46,7 @@ export const reqInsertCategory = (category_id, categoryName) => ajax(BASE+'/admi
 export const reqDelCategory = (category_id) => ajax(BASE+'/admin/delCategory',{category_id},'POST')
 
 //请求单个分类
-export const reqCategory = (category_id) => ajax(BASE + '/admin/category', {category_id})
+export const reqCategory = (category_id) => ajax(BASE + '/admin/getOneCategory', {category_id})
 
 //请求商品列表
 export const reqProducts = (page, pageSize, searchStr, searchType) => ajax(BASE+'/product', {page, pageSize, searchStr, searchType});

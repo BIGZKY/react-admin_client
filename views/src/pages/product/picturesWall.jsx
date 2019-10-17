@@ -55,7 +55,7 @@ export default class PicturesWall extends React.Component {
       if(result.status === 1){
         message.success('图片上传成功');
         file = fileList[fileList.length-1];
-        file.url = result.data.path;
+        file.url = result.url;
       }else{
         message.error('图片上传失败')
       }
@@ -87,6 +87,7 @@ export default class PicturesWall extends React.Component {
           fileList={fileList}
           onPreview={this.handlePreview}
           onChange={this.handleChange}
+          accept=".jpg, .jpeg, .png"
         >
           {fileList.length >= 8 ? null : uploadButton}
         </Upload>

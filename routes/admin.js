@@ -32,7 +32,7 @@ router.post('/updateCategory', function(req, res, next) {
   })
 });
  
-router.get('/category', function(req, res, next) {
+router.get('/getOneCategory', function(req, res, next) {
   mongo.then((db)=>{
     var whereStr = { "_id": ObjectID(req.query.category_id) };
 

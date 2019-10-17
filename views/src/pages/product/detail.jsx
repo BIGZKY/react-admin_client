@@ -59,7 +59,7 @@ export default class Detail extends Component {
                             {
                                 product.imgs.map((img) => (
 
-                                    <img src={img} key={img} alt=""/>
+                                    <img className="producName" src={img} key={img} alt="" style={{width:'150px' ,height: '150px', marginRight:'15px',border: '1px solid #ccc'}}/>
                                 ))
                             }
                         </span>

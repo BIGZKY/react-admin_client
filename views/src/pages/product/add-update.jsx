@@ -16,6 +16,7 @@ import "./add-update.less";
 import LinkButton from "../../components/link-button/link-button";
 import {reqCategorys, reqUpdateProduct, reqAddProduct} from '../../api'
 import PicturesWall from './picturesWall'
+import RichTextEditor from './rich-text-editor'
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -23,6 +24,7 @@ class AddUpdate extends Component {
     constructor(props) {
       super(props);
       this.picturesWall = React.createRef();
+      this.richTextEditor = React.createRef();
     }
     state = {
         previewVisible: false,
@@ -40,7 +42,7 @@ class AddUpdate extends Component {
     loadData = async selectedOptions => {
       //得到选择的option 对象
       const targetOption = selectedOptions[0];
-      this.targetOption = targetOption
+      this.targetOption = targetOption;
       //显示loading
       targetOption.loading = true;
       //请求异步获取
@@ -112,6 +114,9 @@ class AddUpdate extends Component {
         options: options
       })
     }
+    onChange = (value, selectedOptions) => {
+      this.categorys = value;
+    }
     /**
      * 对价格自定义验证
      */
@@ -125,6 +130,8 @@ class AddUpdate extends Component {
 
     handleSubmit = e => {
       e.preventDefault();
+      console.log(this.richTextEditor.current.getDetail())
+      return false
       this.props.form.validateFields(async (err, values) => {
         if (!err) { 
           let imgs = this.picturesWall.current.getImgsPath();
@@ -139,6 +146,8 @@ class AddUpdate extends Component {
             console.log(result);
           }else{
             values.status = 0;
+            values.pCategoryId = this.categorys[0];
+            values.categoryId = this.categorys[1];
             result = await reqAddProduct(values);
             if(result.status === 1){
               message.success('添加成功')
@@ -225,12 +234,16 @@ class AddUpdate extends Component {
                           options={this.state.options} 
                           loadData={this.loadData}
                           placeholder="请选择分类"
+                          onChange={this.onChange}
                         >
                         </Cascader>
                       )}
                   </Form.Item>
                   <Form.Item label="商品图片" extra="" wrapperCol={{ span: 20}}>
                     <PicturesWall ref={this.picturesWall} imgs={isUpdate ? product.imgs : []}></PicturesWall>
+                  </Form.Item>
+                  <Form.Item label="商品详情" extra="" wrapperCol={{ span: 20}}>
+                      <RichTextEditor ref={this.richTextEditor}></RichTextEditor>
                   </Form.Item>
                   <Form.Item wrapperCol={{ span: 6, offset: 2 }}>
                     <Button type="primary" htmlType="submit" >

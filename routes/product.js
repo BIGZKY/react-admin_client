@@ -5,7 +5,6 @@ var path = require('path');
 var formidable = require('formidable');
 const fs = require('fs');
 var Product = require('../config/product.js');
-var upload = require('jquery-file-upload-middleware');
 
 var app = express();
 router.get('/',function (req, res, next) {
@@ -46,22 +45,6 @@ router.post('/addproduct',function (req, res, next) {
     })
 })
 
-// upload.configure({
-//     uploadDir: __dirname + '/public/uploads/',
-//     uploadUrl: '/uploads'
-// });
-
-// router.post('/uploads', function(req, res, next){
-//     upload.fileHandler({
-//         uploadDir: function () {
-//             return path.join(__dirname, '../public/uploads/');
-//         },
-//         uploadUrl: function () {
-//             return '/uploads'
-//         }
-//     })(req, res, next);
-// });
-
 router.post('/uploads', function(req, res, next){
     
     let form = new formidable.IncomingForm();
@@ -75,8 +58,28 @@ router.post('/uploads', function(req, res, next){
         if(err) return next(err);
         console.log(files)
         var file = files.productImg.name;
-        var path = '/public/uploads' + files.productImg.name;
-        res.send({data:{name: file, path: path}, status: 1, message: '上传成功'})
+        var filePath = files.productImg.path;
+        var fileExt = filePath.substring(filePath.lastIndexOf('.'));  
+        var fileName = 'img_' + new Date().getTime()+fileExt; 
+        
+        // var path = '/public/uploads' + files.productImg.name;
+        var targetFile = path.join(form.uploadDir, fileName); 
+        if (('.jpg.jpeg.png.gif').indexOf(fileExt.toLowerCase()) === -1) {  
+            var err = new Error('此文件类型不允许上传');  
+            res.json({code:-1, message:'此文件类型不允许上传'});  
+        }else{
+            fs.rename(filePath, targetFile, function (err) {  
+                if (err) {  
+                    console.info(err);  
+                    res.json({status:0, message:'操作失败'});  
+                } else {  
+                    //上传成功，返回文件的相对路径  
+                    var fileUrl = '/public/uploads/' + fileName;  
+                    res.json({status:1, url:fileUrl, message: '图片上传成功'});  
+                }  
+            }); 
+        } 
+         
     })
 });
   
