@@ -74,7 +74,7 @@ router.post('/uploads', function(req, res, next){
                     res.json({status:0, message:'操作失败'});  
                 } else {  
                     //上传成功，返回文件的相对路径  
-                    var fileUrl = '/public/uploads/' + fileName;  
+                    var fileUrl = 'http://localhost:3001/public/uploads/' + fileName;  
                     res.json({status:1, url:fileUrl, message: '图片上传成功'});  
                 }  
             }); 

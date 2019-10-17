@@ -25,7 +25,7 @@ export default class PicturesWall extends React.Component {
       uid: 0 - (index+1) + '',
       name: 'image.png',
       status: 'done',
-      url: BASE_URL+img
+      url: img
     }))
     this.setState({
       fileList

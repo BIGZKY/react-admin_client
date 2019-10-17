@@ -10,21 +10,21 @@ import {
     Modal,
     Cascader,
     message
-  } from 'antd';
+  } from 'antd'
 
-import "./add-update.less";
-import LinkButton from "../../components/link-button/link-button";
+import "./add-update.less"
+import LinkButton from "../../components/link-button/link-button"
 import {reqCategorys, reqUpdateProduct, reqAddProduct} from '../../api'
 import PicturesWall from './picturesWall'
 import RichTextEditor from './rich-text-editor'
-const { TextArea } = Input;
-const { Option } = Select;
+const { TextArea } = Input
+const { Option } = Select
 
 class AddUpdate extends Component {
     constructor(props) {
-      super(props);
-      this.picturesWall = React.createRef();
-      this.richTextEditor = React.createRef();
+      super(props)
+      this.picturesWall = React.createRef()
+      this.richTextEditor = React.createRef()
     }
     state = {
         previewVisible: false,
@@ -41,13 +41,13 @@ class AddUpdate extends Component {
     }
     loadData = async selectedOptions => {
       //得到选择的option 对象
-      const targetOption = selectedOptions[0];
-      this.targetOption = targetOption;
+      const targetOption = selectedOptions[0]
+      this.targetOption = targetOption
       //显示loading
-      targetOption.loading = true;
+      targetOption.loading = true
       //请求异步获取
-      const result = await this.reqCategorys(targetOption.value);
-      targetOption.loading = false;
+      const result = await this.reqCategorys(targetOption.value)
+      targetOption.loading = false
       //二级分类
       if(result && result.length>0){  
         let subOptions = result.map((c) => ({
@@ -57,7 +57,7 @@ class AddUpdate extends Component {
         }))
         targetOption.children = subOptions
       }else{
-        targetOption.isLeaf = true;
+        targetOption.isLeaf = true
       }
       this.setState({
         options: [...this.state.options]
@@ -68,39 +68,39 @@ class AddUpdate extends Component {
       this.reqCategorys('0')
     }
     componentWillMount() {
-      const product = this.props.location.state;
-      this.product = product;
+      const product = this.props.location.state
+      this.product = product
       //判断是否是更新
-      this.isUpdate = !!product;
-      this.categorys = [];
+      this.isUpdate = !!product
+      this.categorys = []
       if(this.isUpdate){
-        this.categorys.push(product.pCategoryId);
-        this.categorys.push(product.categoryId);
+        this.categorys.push(product.pCategoryId)
+        this.categorys.push(product.categoryId)
       }
       //避免product为空
       this.product = product || {}
     }
 
     reqCategorys = async (parentId) => {
-      const result = await reqCategorys(parentId); 
+      const result = await reqCategorys(parentId) 
       if(parentId==='0'){ 
-        this.initOPtions(result.data);
+        this.initOPtions(result.data)
       }else{
-        return result.data;
+        return result.data
       }
     }
     initOPtions =async (data) => {
-      let options;
+      let options
       options = data.map((c) => ({
         value: c._id,
         label: c.categoryName,
         isLeaf: false
       }))
-      const {isUpdate, product} = this;
-      const {pCategoryId, categoryId} = product;
+      const {isUpdate, product} = this
+      const {pCategoryId, categoryId} = product
       if(isUpdate && pCategoryId!=0){
         
-        const subCategorys = await this.reqCategorys(pCategoryId);
+        const subCategorys = await this.reqCategorys(pCategoryId)
         
         let subOptions = subCategorys.map((c) => ({
           value: c._id,
@@ -115,7 +115,7 @@ class AddUpdate extends Component {
       })
     }
     onChange = (value, selectedOptions) => {
-      this.categorys = value;
+      this.categorys = value
     }
     /**
      * 对价格自定义验证
@@ -124,50 +124,49 @@ class AddUpdate extends Component {
       if(value*1 > 0){
         callback() //验证通过
       }else{
-        callback('价格必须大于0');
+        callback('价格必须大于0')
       }
     }
 
     handleSubmit = e => {
-      e.preventDefault();
-      console.log(this.richTextEditor.current.getDetail())
-      return false
+      e.preventDefault()
+      
       this.props.form.validateFields(async (err, values) => {
         if (!err) { 
-          let imgs = this.picturesWall.current.getImgsPath();
-          values.imgs = imgs;
+          let imgs = this.picturesWall.current.getImgsPath()
+          let detail = this.richTextEditor.current.getDetail()
+          values.imgs = imgs
+          values.detail = detail
           let result
           if(this.isUpdate){
             values.status = this.product.status
-            result = await reqUpdateProduct(this.product._id, values);
+            result = await reqUpdateProduct(this.product._id, values)
             if(result.status === 1){
               message.success('更新成功')
             }
-            console.log(result);
           }else{
-            values.status = 0;
-            values.pCategoryId = this.categorys[0];
-            values.categoryId = this.categorys[1];
-            result = await reqAddProduct(values);
+            values.status = 0
+            values.pCategoryId = this.categorys[0]
+            values.categoryId = this.categorys[1]
+            result = await reqAddProduct(values)
             if(result.status === 1){
               message.success('添加成功')
             }
           }
           
-          console.log('Received values of form: ', values);
         }
-      });
-    };
+      })
+    }
     changeValue = (value) => {
-      console.log(value);
+      console.log(value)
     }
     render() {
-      const { getFieldDecorator } = this.props.form;
+      const { getFieldDecorator } = this.props.form
       const formItemLayout = {
         labelCol: { span: 2 },
         wrapperCol: { span: 8 },
-      };
-      const {isUpdate, product, categorys} = this;
+      }
+      const {isUpdate, product, categorys} = this
       const title = (
           <span>
               <Icon 
@@ -243,7 +242,7 @@ class AddUpdate extends Component {
                     <PicturesWall ref={this.picturesWall} imgs={isUpdate ? product.imgs : []}></PicturesWall>
                   </Form.Item>
                   <Form.Item label="商品详情" extra="" wrapperCol={{ span: 20}}>
-                      <RichTextEditor ref={this.richTextEditor}></RichTextEditor>
+                      <RichTextEditor ref={this.richTextEditor} detail={product.detail}></RichTextEditor>
                   </Form.Item>
                   <Form.Item wrapperCol={{ span: 6, offset: 2 }}>
                     <Button type="primary" htmlType="submit" >
@@ -253,7 +252,7 @@ class AddUpdate extends Component {
               </Form>
           </Card>
         
-      );
+      )
     }
 }
 
