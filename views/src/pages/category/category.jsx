@@ -124,9 +124,7 @@ export default class Category extends Component {
         this.category = category;
         this.setState({
             showStatus: 2
-        });
-        
-        
+        });  
     }
     updateCategory = () => {
         this.form.validateFields(async (err, values) => {

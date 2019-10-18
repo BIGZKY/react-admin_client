@@ -1,8 +1,8 @@
 import React, { Component } from "react"
 import {Icon, Select, Input, Card, Table, Button, message} from 'antd'
 
-import LinkButton from "../../components/link-button/link-button";
-import {reqProducts, reqAddProduct} from '../../api/index'
+import LinkButton from "../../components/link-button/link-button"
+import {reqProducts, reqAddProduct, reqDelProduct} from '../../api/index'
 import { PAGE_SIZE } from '../../utils/constans'
 const {Option} = Select
 export default class ProductHome extends Component {
@@ -21,14 +21,15 @@ export default class ProductHome extends Component {
         // this.addProduct()
     }
     addProduct = async() => {
-        let res = await reqAddProduct();
+        let res = await reqAddProduct()
     }
     getProducts = async (page) => {
-        let res ;
+        this.page = page
+        let res
         if(this.state.searchStr){
-            res = await reqProducts(page, PAGE_SIZE, this.state.searchStr, this.state.searchType);
+            res = await reqProducts(page, PAGE_SIZE, this.state.searchStr, this.state.searchType)
         }else{
-            res = await reqProducts(page, PAGE_SIZE);
+            res = await reqProducts(page, PAGE_SIZE)
         }
         
         if(res.status==1){
@@ -41,11 +42,19 @@ export default class ProductHome extends Component {
     }
     clickSerch = () => {
         if(this.state.searchStr){
-            this.getProducts();
+            this.getProducts()
         }else{
             message.error('请输入搜索关键词')
         }
 
+        
+    }
+    delproduct = async (_id) => {
+        let res = await reqDelProduct(_id)
+        if(res.status ===1){
+            message.success('删除成功')
+            this.getProducts(this.page)
+        }
         
     }
     initColumns() {
@@ -85,6 +94,7 @@ export default class ProductHome extends Component {
                             <span>
                                 <LinkButton onClick={() => {this.props.history.push('/product/addUpdate',product)}}>修改</LinkButton>
                                 <LinkButton onClick={() => {this.props.history.push('/product/detail',product)}}>详情</LinkButton>
+                                <LinkButton onClick={() => this.delproduct(product._id)}>删除</LinkButton>
                             </span>
                         )
                     }
@@ -93,7 +103,7 @@ export default class ProductHome extends Component {
         })
     }
     render() {
-        const {products, columns, loading, total, searchType, searchStr} = this.state;
+        const {products, columns, loading, total, searchType, searchStr} = this.state
         const title = (
             <span >
                 <Select value={searchType} style={{width:150}} onChange={(value) => this.setState({searchType: value})}>

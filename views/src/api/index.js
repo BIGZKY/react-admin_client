@@ -57,4 +57,8 @@ export const reqAddProduct = (values) => ajax(BASE+'/product/addProduct', {value
 //更新商品
 export const reqUpdateProduct = (_id, values) => ajax(BASE+'/product/updateProduct', {_id ,values}, 'POST')
 
-//删除
+//删除商品
+export const reqDelProduct = (_id) => ajax(BASE+'/product/delProduct', {_id}, 'POST')
+
+//添加角色
+export const reqAddRole = (values) => ajax(BASE+'/role/addRole', {values}, 'POST');

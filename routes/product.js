@@ -6,7 +6,6 @@ var formidable = require('formidable');
 const fs = require('fs');
 var Product = require('../config/product.js');
 
-var app = express();
 router.get('/',function (req, res, next) {
     var pageSize = parseInt(req.query.pageSize);
     var page = req.query.page;
@@ -24,8 +23,6 @@ router.get('/',function (req, res, next) {
             res.send({data:result,status:1,msg:'查询成功'})
         })
     }
-    
-    
 })
 router.post('/updateProduct', function (req, res, next) { 
     var where = {_id: ObjectID(req.body._id)}
@@ -44,6 +41,13 @@ router.post('/addproduct',function (req, res, next) {
         res.send({data:[],status:1,msg:'插入成功'})
     })
 })
+router.post('/delProduct', function(req, res, next){
+    var where = {_id: ObjectID(req.body._id)}
+    Product.deleteOne(where, function(err){
+        if(err) return console.error(err)
+        res.send({data:[],status:1,msg:'删除成功'})
+    })
+})
 
 router.post('/uploads', function(req, res, next){
     
@@ -56,7 +60,6 @@ router.post('/uploads', function(req, res, next){
     // 解析 formData 数据
     form.parse(req, (err, fields ,files) => {
         if(err) return next(err);
-        console.log(files)
         var file = files.productImg.name;
         var filePath = files.productImg.path;
         var fileExt = filePath.substring(filePath.lastIndexOf('.'));  

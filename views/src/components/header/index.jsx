@@ -43,7 +43,7 @@ class Header extends Component {
         }else if(item.children){
           
           let currentPath = item.children.find((items)=>{
-              return items.key === path;
+              return path.indexOf(items.key) === 0;
           })
           if(currentPath) {
             title = currentPath.title;
