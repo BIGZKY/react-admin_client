@@ -4,31 +4,34 @@ import { Card, Table, Button, message, Modal} from "antd"
 import {PAGE_SIZE} from '../../utils/constans'
 import AddForm from "./add-form"
 import SetAuth from "./set-auth"
-import { reqAddRole } from "../../api";
+import { reqAddRole, reqUpdateRole ,reqRoles} from "../../api";
 
 export default class Role extends Component {
     state = {
-        total: 0,
         role: {},
         showStatus: 0,
         roles:[
-            {
-                menus: [
-                    '/home',
-                    'products',
-                    '/category',
-                    'product',
-                    '/role'
-                ],
-                _id: '541311sdgfdfghh4g',
-                name:'角色1',
-                create_time: 1554639552758,
-                __v: 0,
-                auth_time: 1557630307021,
-                auth_name: 'admin'
-            },
+            // {
+            //     menus: [
+            //         '/home',
+            //         'products',
+            //         '/category',
+            //         'product',
+            //         '/role'
+            //     ],
+            //     _id: '541311sdgfdfghh4g',
+            //     name:'角色1',
+            //     create_time: 1554639552758,
+            //     __v: 0,
+            //     auth_time: 1557630307021,
+            //     auth_name: 'admin'
+            // },
             
         ]
+    }
+    constructor(props) {
+        super(props)
+        this.setAuthRef = React.createRef();
     }
     initClumns = () => {
         this.setState({
@@ -54,7 +57,21 @@ export default class Role extends Component {
         })
     }
     componentWillMount() {
-        this.initClumns()
+        this.initClumns();
+    }
+    componentDidMount() {
+        this.getRoles();
+    }
+    getRoles = async () => {
+        const res = await reqRoles();
+        console.log(res)
+        if(res.status){
+            this.setState({
+                roles: res.data
+            })
+        }else{
+            message.error('查询失败')
+        }
     }
     onRow = (role) => {
         return {
@@ -85,12 +102,21 @@ export default class Role extends Component {
             }
         })
         this.setState({
-            showStatus: 1
+            showStatus: 0
         })
     }
-    setAuth = () => {
+    setAuth = async () => {
+        const menus = this.setAuthRef.current.getMenus();
+        this.state.role.menus = menus;
+        const res = await reqUpdateRole(this.state.role._id, menus);
+        if(res.status ===1){
+            message.success('保存成功');
+        }else{
+            message.error('保存失败');
+        }
         this.setState({
-            showStatus: 2
+            showStatus: 0,
+            role: {...this.state.role}
         })
     }
     handleCancel = () => {
@@ -102,7 +128,7 @@ export default class Role extends Component {
 
     // }
     render() {
-        const {roles, columns, total, role, showStatus} = this.state;
+        const {roles, columns, role, showStatus} = this.state;
         const title = (
             <span>
                 <Button type="primary" onClick={() => this.setState({showStatus:1})}>创建角色</Button>
@@ -118,9 +144,7 @@ export default class Role extends Component {
                     columns={columns} 
                     rowKey="_id"
                     pagination={{
-                        total,
                         defaultPageSize: PAGE_SIZE,
-                        onChange: this.getProducts
                     }}
                     rowSelection= {{type: 'radio',selectedRowKeys:[role._id]}}
                     onRow = {this.onRow}
@@ -139,7 +163,7 @@ export default class Role extends Component {
                     onOk={this.setAuth}
                     onCancel={this.handleCancel}
                 >
-                    <SetAuth setForm={(form) => this.form = form}></SetAuth>
+                    <SetAuth role={role} ref={this.setAuthRef}></SetAuth>
                 </Modal>
             </Card>
         )

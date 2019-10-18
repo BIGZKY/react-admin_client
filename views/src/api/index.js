@@ -62,3 +62,9 @@ export const reqDelProduct = (_id) => ajax(BASE+'/product/delProduct', {_id}, 'P
 
 //添加角色
 export const reqAddRole = (values) => ajax(BASE+'/role/addRole', {values}, 'POST');
+
+//更新角色
+export const reqUpdateRole = (_id, menus) => ajax(BASE+'/role/updateRole', {_id, menus}, 'POST')
+
+//获取角色列表
+export const reqRoles = () => ajax(BASE+'/role') 
