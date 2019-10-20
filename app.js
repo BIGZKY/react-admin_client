@@ -44,7 +44,7 @@ app.all('*', function(req, res, next) {
 
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/user', usersRouter);
 app.use('/admin', adminRouter);
 app.use('/product', productRouter);
 app.use('/role', roleRouter);

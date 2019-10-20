@@ -22,6 +22,7 @@ const { Footer, Sider, Content } = Layout;
 export default class Login extends Component {
     render() {
         const user = memoryUtils.user;
+        console.log(user)
         //如果内存没有存储user ==> 当前没有登录
         if(!user || !user._id){
             //跳转到登录界面
