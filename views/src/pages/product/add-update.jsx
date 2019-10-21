@@ -69,7 +69,7 @@ class AddUpdate extends Component {
     }
     componentWillMount() {
       const product = this.props.location.state
-      this.product = product
+      this.product = product || {}
       //判断是否是更新
       this.isUpdate = !!product
       this.categorys = []
@@ -77,8 +77,6 @@ class AddUpdate extends Component {
         this.categorys.push(product.pCategoryId)
         this.categorys.push(product.categoryId)
       }
-      //避免product为空
-      this.product = product || {}
     }
 
     reqCategorys = async (parentId) => {
