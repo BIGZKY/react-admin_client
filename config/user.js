@@ -8,5 +8,5 @@ var UserSchema = new Schema({
     create_time: String,
     auth: String
 })
-ProductSchema.plugin(mongoosePaginate);
+UserSchema.plugin(mongoosePaginate);
 module.exports = mongoose.model('user', UserSchema)

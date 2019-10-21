@@ -5,8 +5,8 @@ const Schema = mongoose.Schema;
 var RoleSchema = new Schema({
     menus: Array,
     name: String,
-    create_time: String,
-    auth_time: String,
+    create_time: Number,
+    auth_time: Number,
     auth_name: String,
 })
 RoleSchema.plugin(mongoosePaginate);

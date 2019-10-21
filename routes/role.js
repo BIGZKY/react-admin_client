@@ -15,7 +15,9 @@ router.get('/', (req, res) => {
 })
 
 router.post('/addRole', (req, res, next) => {
-    Role.create(req.body.values)
+    let param = req.body.values;
+    param.create_time = new Date().getTime();
+    Role.create(param)
         .then(role => {
             res.send({data:role,status:1,msg:'添加成功'})
         }).catch(error => {
@@ -26,13 +28,14 @@ router.post('/addRole', (req, res, next) => {
 router.post('/updateRole', (req, res) => {
     
     let where = {"_id": ObjectID(req.body._id)};
-    let auth_time = new Date().getTime()+'';
+    let auth_time = new Date().getTime();
+    console.log(req.body._id)
     let set = {$set:{'menus':req.body.menus, 'auth_name':req.body.auth_name, 'auth_time':auth_time}}
     Role.update(where, set)
         .then(role => {
             res.send({status:1,msg:'设置成功'})
         }).catch(error => {
-            res.send({status: 0,msg: '设置权限异常'})
+            res.send({status: 0,msg: error})
         })
 })
 

@@ -6,7 +6,7 @@ var logger = require('morgan');
 var bodyParser = require('body-parser');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var usersRouter = require('./routes/user');
 var adminRouter = require('./routes/admin');
 var productRouter = require('./routes/product');
 var roleRouter = require('./routes/role');

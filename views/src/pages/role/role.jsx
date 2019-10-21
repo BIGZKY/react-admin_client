@@ -7,33 +7,18 @@ import {PAGE_SIZE} from '../../utils/constans'
 import AddForm from "./add-form"
 import SetAuth from "./set-auth"
 import { reqAddRole, reqUpdateRole ,reqRoles, reqDelRole} from "../../api";
+import {formateDate} from '../../utils/dateUtils'
 
 export default class Role extends Component {
     state = {
         role: {},
         showStatus: 0,
-        roles:[
-            // {
-            //     menus: [
-            //         '/home',
-            //         'products',
-            //         '/category',
-            //         'product',
-            //         '/role'
-            //     ],
-            //     _id: '541311sdgfdfghh4g',
-            //     name:'角色1',
-            //     create_time: 1554639552758,
-            //     __v: 0,
-            //     auth_time: 1557630307021,
-            //     auth_name: 'admin'
-            // },
-            
-        ]
+        roles:[]
     }
     constructor(props) {
         super(props)
         this.setAuthRef = React.createRef();
+        
     }
     initClumns = () => {
         this.setState({
@@ -45,10 +30,12 @@ export default class Role extends Component {
                 {
                     title: '创建时间',
                     dataIndex: 'create_time',
+                    render: formateDate
                 },
                 {
                     title: '授权时间',
                     dataIndex: 'auth_time',
+                    render: formateDate
                 },
                 {
                     title: '授权人',
@@ -112,7 +99,6 @@ export default class Role extends Component {
             if(!err){
                 //清除缓存数据
                 this.form.resetFields()
-                values.create_time = new Date().getTime()+'';
                 //发送更新请求
                 const result = await reqAddRole(values)
                 if(result.status ===1 ){
@@ -129,6 +115,7 @@ export default class Role extends Component {
         const menus = this.setAuthRef.current.getMenus();
         this.state.role.menus = menus;
         const user = memoryUtils.user;
+        console.log(this.state.role)
         const res = await reqUpdateRole(this.state.role._id, menus, user.username);
 
         if(res.status ===1){

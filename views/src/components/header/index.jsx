@@ -13,7 +13,7 @@ import './index.less'
 class Header extends Component {
 
     state = {
-      currentTime: formateDate(new Date()),
+      currentTime: formateDate(new Date().getTime()),
       dayPictureUrl: '',
       weather: ''
     }

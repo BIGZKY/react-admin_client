@@ -11,11 +11,22 @@ export default class SetAuth extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            checkedKeys: this.props.role.menu || []
+            checkedKeys: this.props.role.menus || []
         }
     }
     componentWillMount() {
         this.treeNodes = this.getTreeNodes(menuList)
+    }
+    /**
+     * 当组件接收到新的属性时自动调用  
+     *  1.在render() 之前调用
+     *  2.初始显示的时候不会调用
+     */
+    componentWillReceiveProps(nextProps) {
+        let menus = nextProps.role.menus;
+        this.setState({
+            checkedKeys: menus
+        })
     }
     getTreeNodes = (menuList) => {
         return menuList.reduce((pre, item) => {
