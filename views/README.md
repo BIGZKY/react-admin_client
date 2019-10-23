@@ -37,7 +37,8 @@
     
     3. shouldComponentUpdate() 返回false后 不再执行更新的render()
 
-    4. 使用pureComponent时进行赋值需要使用setState(fn) \ setState({date:[...]})
+    4. 使用pureComponent时进行赋值需要使用setState(fn) \ setState({date:[...]})  否则监测不到数据变化3.
+    
 
 
 # PureComponent 和 component的区别

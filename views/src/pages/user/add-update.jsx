@@ -1,4 +1,5 @@
-import React ,{ Component } from "react"
+import React ,{ PureComponent } from "react"
+import PropTypes from 'prop-types'
 import {
     Form,
     Select,
@@ -12,19 +13,18 @@ import {
 
 const { Item } = Form;
 const { Option } = Select;
-class AddUpdate extends Component {
-
+class AddUpdate extends PureComponent {
+    static propTypes = {
+        setForm: PropTypes.func.isRequired, // 用来传递form对象的函数
+        roles: PropTypes.array.isRequired,
+        user: PropTypes.object
+      }
     componentWillMount() {
-        this.roles = this.props.roles;
-        this.user = this.props.user || {};
         this.props.setForm(this.props.form);
     }
-    componentDidMount() {
-        this.props.form.resetFields();
-    }
     render() {
+        const {roles, user} = this.props
         const { getFieldDecorator } = this.props.form;
-        const { user, roles } = this
         const formItemLayout = {
             labelCol: {span: 5},
             wrapperCol: {span: 16}

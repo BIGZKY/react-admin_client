@@ -23,6 +23,7 @@ export default class User extends Component {
         const res = await reqRoles();
         if(res.status){
             this.roles = res.data;
+            this.initRoleNames();
         }
     }
     reqUsers = async () => {
@@ -52,7 +53,8 @@ export default class User extends Component {
                 },
                 {
                     title: '所属角色',
-                    dataIndex: 'role_name',
+                    dataIndex: 'role_id',
+                    render: (role_id) => this.roleNames[role_id]
                 },
                 {
                     width: 150,
@@ -69,6 +71,13 @@ export default class User extends Component {
             ]
         })
     }
+    initRoleNames = () => {
+        this.roleNames = this.roles.reduce((pre, role) => {
+            pre[role._id] = role.name;
+            return pre;
+        }, {})
+        
+    }
     delUser = (user) => {
 
     } 
@@ -81,12 +90,7 @@ export default class User extends Component {
     addUser = () => {
         const form = this.form;
         form.validateFields(async (err, values) => {
-            console.log(values)
             if(!err){
-                let role = this.roles.find((item) => {
-                    return item._id === values.role_id
-                }) 
-                values.role_name = role.name;
                 const res = await reqAddUser(values)
                 if(res.status){
                     this.form.resetFields();
@@ -100,21 +104,29 @@ export default class User extends Component {
         })
     }
     handleCancel = () => {
+
+        this.form.resetFields();
         this.setState({
             showStatus: 0
         })
+    }
+    showAdd = () => {
+        this.user = {};
+        this.setState({showStatus: 1})
     }
     render() {
         const title = (
             <span>用户列表</span>
         )
+        const {users, columns, showStatus} = this.state;
+        const user = this.user || {};
         const extra = (
-            <Button type="primary" onClick={() => this.setState({showStatus: 1})}>
+            <Button type="primary" onClick={() => this.showAdd()}>
                 <Icon type="plus" ></Icon>
                 添加用户
             </Button> 
         )
-        const {users, columns, showStatus} = this.state;
+        
         return (
             <Card title={title} extra={extra}>
                 <Table bordered 
@@ -123,12 +135,12 @@ export default class User extends Component {
                     rowKey="_id"
                 ></Table>
                 <Modal 
-                    title="添加用户"
+                    title={user._id ? '修改用户' : '添加用户'}
                     visible={showStatus === 1}
                     onOk = { this.addUser }
                     onCancel ={ this.handleCancel }
                 >
-                    <AddForm setForm={(form) => this.form = form} roles={this.roles} user={this.user}></AddForm>
+                    <AddForm setForm={(form) => this.form = form} roles={this.roles} user={user}></AddForm>
                 </Modal>
             </Card>
         )
