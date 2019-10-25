@@ -3,9 +3,11 @@ import {Icon, Select, Input, Card, Table, Button, message, Modal} from 'antd'
 
 import LinkButton from "../../components/link-button/link-button"
 import AddForm from "./add-update"
-import {reqUsers, reqRoles, reqAddUser,} from '../../api/index'
+import {reqUsers, reqRoles, reqAddUser,reqDelUser} from '../../api/index'
 import { PAGE_SIZE } from '../../utils/constans'
 import {formateDate} from '../../utils/dateUtils'
+const { confirm } = Modal;
+
 export default class User extends Component {
     state = {
         users: [],
@@ -79,7 +81,25 @@ export default class User extends Component {
         
     }
     delUser = (user) => {
-
+        confirm({
+            title: `确认删除${user.name}吗?`,
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            async onOk () {
+                const res = await reqDelUser(user._id);
+                if(res.status === 1){
+                    message.success('删除成功');
+                    this.reqUsers();
+                }else{
+                    message.err(res.msg);
+                }
+            },
+            onCancel() {
+              console.log('Cancel');
+            },
+          });
+        
     } 
     updateUser = (user) => {
         this.user = user;

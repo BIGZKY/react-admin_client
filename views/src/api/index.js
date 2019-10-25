@@ -3,7 +3,7 @@ import jsonp from 'jsonp'
 import {message} from 'antd'
 const BASE = 'http://localhost:3001';
 
-export const reqLogin = (username,password) => ajax(BASE+'/login',{username,password},'POST');
+export const reqLogin = (name,password) => ajax(BASE+'/user/login',{name,password},'POST');
 
 //json 请求的接口请求函数
 /**
@@ -75,11 +75,11 @@ export const reqDelRole = (_id) => ajax(BASE+'/role/delRole', {_id}, 'POST')
 //获取用户列表
 export const reqUsers = () => ajax(BASE+'/user') 
 
-//添加角色
+//添加用户
 export const reqAddUser = (values) => ajax(BASE+'/user/addUser', values, 'POST');
 
-//删除角色
+//删除用户
 export const reqDelUser = (_id) => ajax(BASE+'/user/delUser', {_id}, 'POST')
 
-//更新角色
+//更新用户
 export const reqUpdateUser = (values) => ajax(BASE+'/role/updateUser',values, 'POST')

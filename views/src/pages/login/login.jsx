@@ -8,7 +8,7 @@ import {
 import logo from '../../assets/images/logo.png'
 
 import './login.less'
-// import { reqLogin } from "../../api";
+import { reqLogin } from "../../api";
 import storageUtils from "../../utils/storageUtils";
 import memmoryUtils from "../../utils/memmoryUtils";
 
@@ -22,19 +22,11 @@ class Login extends Component {
         //对所有表单进行验证
         this.props.form.validateFields(async (err, values) =>{
             if(!err){
-                // const {username,password} = values
+                const {name,password} = values
                 //简化promise.then()操作 使用async
                 
-                    // const response = await reqLogin(username, password);
-                const response = {
-                    status: 0,
-                    data: {
-                        _id: '6578347658609219',
-                        username: 'admin',
-                        password: '123456'
-                    }
-                }
-                if(response.status === 0){ 
+                const response = await reqLogin(name, password);
+                if(response.status === 1){ 
                     //提示登录成功
                     message.success('登陆成功')
                     
@@ -72,17 +64,15 @@ class Login extends Component {
                     <h2>用户登录</h2>
                     <Form onSubmit={this.handleSubmit} className="login-form">
                         <Form.Item>
-                            {getFieldDecorator('username', {
+                            {getFieldDecorator('name', {
                                 rules: [
                                         {required: true, message: '请输入用户名!'},
                                         {max: 12, message: '用户名最多12位!'},
-                                        {min: 4, message: '用户名最少4位!'},
-                                        {pattern: /^[0-9a-zA-Z_]+$/, message: '用户名必须有数字, 字母组成!'},
                                     ],
                             })(
                                 <Input
                                     prefix={<Icon type="user" style={{color:'rgba(0,0,0,.25)'}}></Icon>}
-                                    placeholder="userName"
+                                    placeholder="请输入用户名"
                                 />
                             )}
                             
@@ -98,7 +88,7 @@ class Login extends Component {
                             })(
                                 <Input
                                     prefix={<Icon type="lock" style={{color:'rgba(0,0,0,.25)'}}></Icon>}
-                                    placeholder="password" type="password"
+                                    placeholder="请输入密码" type="password"
                                 />
                             )}
                             

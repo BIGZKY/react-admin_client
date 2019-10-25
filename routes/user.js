@@ -5,6 +5,7 @@ const ObjectID = require('mongodb').ObjectID;
 const User = require('../config/user')
 /* GET users listing. */
 router.get('/', (req, res) => {
+  // let where = {name: }
   User.find()
     .then((data) => {
       res.send({data:data, status: 1, msg: '查询成功'});
@@ -32,14 +33,33 @@ router.post('/addUser', (req, res) => {
 
 router.post('/delUser', (req, res) => {
   let param = req.body;
-  if(param._id) {
+  if(!param._id) {
     res.send({status: 0, msg: '缺少参数'});
     return false;
   }
   let where = {_id: ObjectID(param._id)};
   User.deleteOne(where)
     .then(() => {
-      res.send({status: 1, msg: '注册成功'});
+      res.send({status: 1, msg: '删除成功'});
+    }).catch((err) => {
+      res.send({status: 0, msg: err});
+    })
+})
+
+router.post('/login', (req, res) => {
+  let param = req.body;
+  if(!param.name || !param.password ) {
+    res.send({status: 0, msg: '缺少参数'});
+    return false;
+  }
+  let where = {name: param.name, password: param.password}
+  User.findOne(where)
+    .then((result) => {
+      if(!result){
+        res.send({status: 0, msg: '用户名或密码错误'});
+      }else{
+        res.send({data: result,status: 1, msg: '用户名或密码错误'});
+      }
     }).catch((err) => {
       res.send({status: 0, msg: err});
     })
