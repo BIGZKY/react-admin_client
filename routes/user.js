@@ -3,6 +3,13 @@ const router = express.Router();
 const ObjectID = require('mongodb').ObjectID;
 
 const User = require('../config/user')
+
+//登录
+router.post('/login', (req, res) => {
+  let where = {}
+  User.findOne(where)
+})
+
 /* GET users listing. */
 router.get('/', (req, res) => {
   User.find()

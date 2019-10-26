@@ -8,7 +8,7 @@ import {
 import logo from '../../assets/images/logo.png'
 
 import './login.less'
-// import { reqLogin } from "../../api";
+import { reqLogin } from "../../api";
 import storageUtils from "../../utils/storageUtils";
 import memmoryUtils from "../../utils/memmoryUtils";
 
@@ -25,15 +25,7 @@ class Login extends Component {
                 // const {username,password} = values
                 //简化promise.then()操作 使用async
                 
-                    // const response = await reqLogin(username, password);
-                const response = {
-                    status: 0,
-                    data: {
-                        _id: '6578347658609219',
-                        username: 'admin',
-                        password: '123456'
-                    }
-                }
+                const response = await reqLogin(username, password);
                 if(response.status === 0){ 
                     //提示登录成功
                     message.success('登陆成功')
