@@ -5,7 +5,7 @@ const ObjectID = require('mongodb').ObjectID;
 const User = require('../config/user')
 /* GET users listing. */
 router.get('/', (req, res) => {
-  // let where = {name: }
+  // let where = {$ne: {name: 'admin'}}
   User.find()
     .then((data) => {
       res.send({data:data, status: 1, msg: '查询成功'});
@@ -26,6 +26,22 @@ router.post('/addUser', (req, res) => {
   User.create(param)
     .then(() => {
       res.send({status: 1,msg: '添加成功'});
+    }).catch((err) => {
+      res.send({status: 0, msg: err});
+    })
+})
+
+router.post('/updateUser', (req, res) => {
+  let param = req.body;
+  if(!param._id) {
+    res.send({status: 0, msg: '缺少参数'});
+    return false;
+  }
+  let where = {_id: ObjectID(param._id)};
+  let set = {$set:{'name':param.name, 'password':param.password, 'email':param.email, 'phone': param.phone, 'role_id': param.role_id}}
+  User.updateOne(where,set)
+    .then(() => {
+      res.send({status: 1, msg: '修改成功'});
     }).catch((err) => {
       res.send({status: 0, msg: err});
     })

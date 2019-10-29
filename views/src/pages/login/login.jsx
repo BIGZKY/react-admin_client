@@ -8,7 +8,7 @@ import {
 import logo from '../../assets/images/logo.png'
 
 import './login.less'
-import { reqLogin } from "../../api";
+import { reqLogin, reqOneRole } from "../../api";
 import storageUtils from "../../utils/storageUtils";
 import memmoryUtils from "../../utils/memmoryUtils";
 
@@ -27,23 +27,29 @@ class Login extends Component {
                 
                 const response = await reqLogin(name, password);
                 if(response.status === 1){ 
-                    //提示登录成功
-                    message.success('登陆成功')
-                    
                     //保存user
                     const user = response.data;
-                    // 保存到内存
-                    memmoryUtils.user = user;
-                    // 保存到本地
-                    storageUtils.saveUser(user);
-                    //跳转到管理界面
-                    this.props.history.replace('/')
+                    this.reqOneRole(user);
+                    
                 }else{
                     message.error(response.msg)
                 }
-                
             }
         })
+    }
+    reqOneRole = async (user) => {
+        const res = await reqOneRole(user.role_id);
+        if(res.status === 1){
+            //提示登录成功
+            message.success('登陆成功');
+            user.menus = res.data.menus;
+            // 保存到内存
+            memmoryUtils.user = user;
+            // 保存到本地
+            storageUtils.saveUser(user);
+            //跳转到管理界面
+            this.props.history.replace('/');
+        }    
     }
     render() {
 

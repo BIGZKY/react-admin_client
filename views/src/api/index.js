@@ -69,6 +69,9 @@ export const reqUpdateRole = (_id, menus, auth_name) => ajax(BASE+'/role/updateR
 //获取角色列表
 export const reqRoles = () => ajax(BASE+'/role') 
 
+//获取单个角色
+export const reqOneRole = (_id) => ajax(BASE+'/role/oneRole', {_id})
+
 //删除角色
 export const reqDelRole = (_id) => ajax(BASE+'/role/delRole', {_id}, 'POST')
 
@@ -82,4 +85,4 @@ export const reqAddUser = (values) => ajax(BASE+'/user/addUser', values, 'POST')
 export const reqDelUser = (_id) => ajax(BASE+'/user/delUser', {_id}, 'POST')
 
 //更新用户
-export const reqUpdateUser = (values) => ajax(BASE+'/role/updateUser',values, 'POST')
+export const reqUpdateUser = (values) => ajax(BASE+'/user/updateUser',values, 'POST')

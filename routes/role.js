@@ -14,6 +14,16 @@ router.get('/', (req, res) => {
         })
 })
 
+router.get('/oneRole', (req, res) => {
+    let where = {_id: ObjectID(req.query._id)}
+    Role.findOne(where)
+        .then((role) => {
+            res.send({data:role,status:1,msg:'查询成功'})
+        }).catch(error => {
+            res.send({status: 0,msg: '查询异常'})
+        })
+})
+
 router.post('/addRole', (req, res, next) => {
     let param = req.body.values;
     param.create_time = new Date().getTime();

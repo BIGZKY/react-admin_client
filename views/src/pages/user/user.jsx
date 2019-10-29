@@ -3,7 +3,7 @@ import {Icon, Select, Input, Card, Table, Button, message, Modal} from 'antd'
 
 import LinkButton from "../../components/link-button/link-button"
 import AddForm from "./add-update"
-import {reqUsers, reqRoles, reqAddUser,reqDelUser} from '../../api/index'
+import {reqUsers, reqRoles, reqAddUser,reqDelUser, reqUpdateUser} from '../../api/index'
 import { PAGE_SIZE } from '../../utils/constans'
 import {formateDate} from '../../utils/dateUtils'
 const { confirm } = Modal;
@@ -64,7 +64,7 @@ export default class User extends Component {
                     render: (user) => {
                         return (
                             <span>
-                                <LinkButton onClick={() => this.updateUser(user)}>修改</LinkButton>
+                                <LinkButton onClick={() => this.showUpdateUser(user)}>修改</LinkButton>
                                 <LinkButton onClick={() => this.delUser(user)}>删除</LinkButton>
                             </span>
                         )
@@ -101,10 +101,28 @@ export default class User extends Component {
           });
         
     } 
-    updateUser = (user) => {
+    showUpdateUser = (user) => {
         this.user = user;
         this.setState({
             showStatus: 1,
+        })
+    }
+    updateUser = () => {
+        const form = this.form;
+        
+        form.validateFields(async (err, values) => {
+            if(!err){
+                values = {...values,_id: this.user._id}
+                const res = await reqUpdateUser(values)
+                if(res.status === 1){
+                    this.form.resetFields();
+                    message.success('修改成功');
+                    this.reqUsers();
+                    this.setState({
+                        showStatus: 0
+                    })
+                }
+            }
         })
     }
     addUser = () => {
@@ -157,7 +175,7 @@ export default class User extends Component {
                 <Modal 
                     title={user._id ? '修改用户' : '添加用户'}
                     visible={showStatus === 1}
-                    onOk = { this.addUser }
+                    onOk = { user._id ? this.updateUser : this.addUser}
                     onCancel ={ this.handleCancel }
                 >
                     <AddForm setForm={(form) => this.form = form} roles={this.roles} user={user}></AddForm>
