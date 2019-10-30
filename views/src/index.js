@@ -1,11 +1,20 @@
-import React from 'react'
-import ReactDOM from "react-dom"; 
+import React from "react"
+import { render } from "react-dom"
 
-import App from "./app"
-import storageUtils from './utils/storageUtils';
-import memoryUtils from './utils/memmoryUtils';
+import App from "./app";
+import store from "./redux/store";
 
-const user = storageUtils.getUser();
-memoryUtils.user = user;
+render(
+    <App store = {store}/>,
+    document.getElementById('root')
+)
+/**
+ * 对store内数据 监听数据变化  subscripe
+ */
 
-ReactDOM.render(<App />, document.getElementById('root'))
+ store.subscribe(()=>{
+    render(
+        <App store = {store}/>,
+        document.getElementById('root')
+    )
+ })
