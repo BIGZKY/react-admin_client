@@ -23,6 +23,7 @@ class AddUpdate extends PureComponent {
         this.props.setForm(this.props.form);
     }
     render() {
+        console.log('PureComponent')
         const {roles, user} = this.props
         const { getFieldDecorator } = this.props.form;
         const formItemLayout = {

@@ -1,10 +1,10 @@
-import React, { Component } from "react"
+import React, { Component, PureComponent } from "react"
 import { Form, Input ,Tree} from 'antd';
 import ProoTypes from "prop-types";
 
 import menuList from "../../config/menuConfig";
 const {TreeNode} = Tree
-export default class SetAuth extends Component {
+export default class SetAuth extends PureComponent {
     static propTypes = {
         role: ProoTypes.object
     }
@@ -49,6 +49,7 @@ export default class SetAuth extends Component {
     render() {
         const {role} = this.props || {}
         const {checkedKeys} = this.state;
+        console.log('PureComponent')
         return (
             <div>
                 <Form >

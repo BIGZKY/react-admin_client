@@ -131,7 +131,8 @@ export default class ProductHome extends Component {
                         total,
                         defaultPageSize: PAGE_SIZE,
                         showQuickJumper: true,
-                        onChange: this.getProducts
+                        onChange: this.getProducts,
+                        current: this.page
                     }}
                 ></Table>
             </Card>
