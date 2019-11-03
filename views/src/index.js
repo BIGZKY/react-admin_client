@@ -1,20 +1,13 @@
 import React from "react"
 import { render } from "react-dom"
+import { Provider } from "react-redux";
 
-import App from "./app";
+import App from "./containers/app";
 import store from "./redux/store";
 
 render(
-    <App store = {store}/>,
+    <Provider store={ store }>
+        <App />>
+    </Provider>,
     document.getElementById('root')
 )
-/**
- * 对store内数据 监听数据变化  subscripe
- */
-
- store.subscribe(()=>{
-    render(
-        <App store = {store}/>,
-        document.getElementById('root')
-    )
- })
