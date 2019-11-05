@@ -51,3 +51,6 @@
         2). 办法1: 重写shouldComponentUpdate(), 判断如果数据有变化返回true, 否则返回false
         3). 办法2: 使用PureComponent代替Component
         4). 说明: 一般都使用PureComponent来优化组件性能
+
+
+# 

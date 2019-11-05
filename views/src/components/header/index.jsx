@@ -1,7 +1,9 @@
 import React, { Component } from "react"
 import {Modal} from 'antd'
 import {withRouter} from 'react-router-dom'
+import { connect } from "react-redux";
 
+import { set_headTitle } from "../../redux/actions";
 import store from '../../utils/storageUtils'
 import {reqWeather} from '../../api/index'
 import {formateDate} from '../../utils/dateUtils'
@@ -101,4 +103,12 @@ class Header extends Component {
     
 } 
 
-export default withRouter(Header)
+/**
+ * withRouter 把不是通过路由切换过来的组件中，将react-router 的 history、location、match 三个对象传入props对象上
+ */
+
+// export default withRouter(Header)
+export default connect(
+  state => ({headTitle: state.headTitle}),
+  {}
+)(withRouter(Header))
