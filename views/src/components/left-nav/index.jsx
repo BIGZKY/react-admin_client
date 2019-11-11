@@ -1,12 +1,13 @@
 import React, { Component } from "react"
 import { Menu, Icon } from 'antd'
 import {Link, withRouter} from 'react-router-dom'
+import { connect } from "react-redux";
 
 import './index.less'
 import logo from '../../assets/images/logo.png'
 import menuList from "../../config/menuConfig"
 import storageUtils from "../../utils/storageUtils";
-
+import { set_headTitle } from "../../redux/actions";
 const { SubMenu } = Menu;
 class LeftNav extends Component {
     // getMenuNodes_map = (menuList) => {
@@ -84,8 +85,12 @@ class LeftNav extends Component {
                         </SubMenu>
                     ))
                 }else {
+                    if(item.key === pathname || pathname.indexOf(item.key)!==-1){
+                        this.props.set_headTitle(item.title)
+                    }
                     pre.push((
-                        <Menu.Item key={item.key}>
+                        
+                        <Menu.Item key={item.key} onClick={() => this.props.set_headTitle(item.title)}>
                             <Link to={item.key}>
                                 <Icon type={item.icon} />
                                 <span>{item.title}</span>
@@ -125,4 +130,7 @@ class LeftNav extends Component {
     }
 } 
 
-export default withRouter(LeftNav)
+export default connect(
+    state => ({}),
+    {set_headTitle}
+)(withRouter(LeftNav))

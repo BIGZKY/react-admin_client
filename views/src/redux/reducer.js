@@ -1,5 +1,6 @@
 import { combineReducers } from "redux"
 import storageUtils from "../utils/storageUtils"
+import { SET_HEAD_TITLE, RECEIVE_USER, SHOW_ERROR_MSG} from "./action-type";
 
 /**
  * 用来管理里头部标题的reducer函数
@@ -7,6 +8,9 @@ import storageUtils from "../utils/storageUtils"
 const initHeadTitle = '首页'
 function headTitle(state=initHeadTitle, action) {
     switch(action.type){
+        case SET_HEAD_TITLE:
+            return action.data
+
         default:
             return false
     }
@@ -16,6 +20,10 @@ function headTitle(state=initHeadTitle, action) {
 const initUser = storageUtils.getUser();
 function user(state=initUser, action) {
     switch(action.type) {
+        case SHOW_ERROR_MSG:
+            return {...state, errorMsg: action.data}
+        case RECEIVE_USER:
+            return action.data
         default:
             return state
     }

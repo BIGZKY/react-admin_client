@@ -82,7 +82,7 @@ class Header extends Component {
     render() {
       const username = memoryUtils.user.username;
       const {currentTime, dayPictureUrl, weather} = this.state;
-      const title = this.getTitle();
+      const title = this.props.headTitle;
       return (
           <div className="header">
             <div className="header-top">
