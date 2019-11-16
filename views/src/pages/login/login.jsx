@@ -8,10 +8,11 @@ import {
 import logo from '../../assets/images/logo.png'
 
 import './login.less'
-import { reqLogin, reqOneRole } from "../../api";
+import { reqOneRole } from "../../api";
 import storageUtils from "../../utils/storageUtils";
 import memmoryUtils from "../../utils/memmoryUtils";
-
+import { login } from "../../redux/actions";
+import { connect } from "react-redux";
 /**
  * 登录组件
  *  */
@@ -23,17 +24,7 @@ class Login extends Component {
         this.props.form.validateFields(async (err, values) =>{
             if(!err){
                 const {name,password} = values
-                //简化promise.then()操作 使用async
-                
-                const response = await reqLogin(name, password);
-                if(response.status === 1){ 
-                    //保存user
-                    const user = response.data;
-                    this.reqOneRole(user);
-                    
-                }else{
-                    message.error(response.msg)
-                }
+                this.props.login(name, password);
             }
         })
     }
@@ -54,11 +45,11 @@ class Login extends Component {
     render() {
 
         const { getFieldDecorator } = this.props.form;
-        const user = memmoryUtils.user;
+        const user = this.props.user;
         //如果内存没有存储user ==> 当前没有登录
         if(user && user._id){
             //跳转到登录界面
-            return <Redirect to="/admin" />
+            return <Redirect to="/home" />
         }
         return (
             <div className="loginWrap">
@@ -116,4 +107,8 @@ class Login extends Component {
  *  3, 作用: 扩展组件的功能
  */
 
-export default Login = Form.create()(Login);
+const WrapLogin = Form.create()(Login);
+export default connect(
+    state => ({user: state.user}),
+    {login}
+)(WrapLogin)

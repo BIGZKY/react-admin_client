@@ -21,7 +21,7 @@ const initUser = storageUtils.getUser();
 function user(state=initUser, action) {
     switch(action.type) {
         case SHOW_ERROR_MSG:
-            return {...state, errorMsg: action.data}
+            return {...state, errorMsg: action.data}  //原始state上添加一个属性  不要直接修改state
         case RECEIVE_USER:
             return action.data
         default:

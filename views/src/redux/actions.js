@@ -1,7 +1,7 @@
-import { SET_HEAD_TITLE, RECEIVE_USER} from "./action-type";
-import { reqLogin } from "../../api";
-import storageUtils from "../../utils/storageUtils";
-import memmoryUtils from "../../utils/memmoryUtils";
+import { SET_HEAD_TITLE, RECEIVE_USER, SHOW_ERROR_MSG} from "./action-type";
+import { reqLogin } from "../api/index";
+import storageUtils from "../utils/storageUtils";
+import memmoryUtils from "../utils/memmoryUtils";
 
 export const set_headTitle = (headTitle) => ({type:SET_HEAD_TITLE, data: headTitle})
 
@@ -22,8 +22,8 @@ export const login = (username, password) => {
             storageUtils.saveUser(user);
             dispatch(receive_user(user));
         }else{//失败，分发失败的action
-            const msg = result.msg;
-            dispatch(show_errorMsg(errorMsg))
+            const msg = res.msg;
+            dispatch(show_errorMsg(msg))
         }
         
     }
