@@ -53,4 +53,18 @@
         4). 说明: 一般都使用PureComponent来优化组件性能
 
 
-# 
+#  react-redux
+    1. redact-redux 向外暴露了像个api
+        Provider 组建类
+        connect 函数
+    
+    2. Provider组件
+        接收store 属性
+        让所有容器组件都可以看到store， 从而通过store读取/更新状态
+
+    3. connect 函数
+        接收2个参数： mapStateToProps 和mapDispatchToProps
+        mapStateToProps: 为了一个函数， 用来指定想UI组件传递哪些一般属性
+        mapDispatchToProps: 为一个函数或 对象，用来指定想UI组件传递哪些函数属性
+        connect() 执行的返回值为一个高阶组件： 包装UI组件，返回一个新的容器组件
+        容器组件会向UI传入前面指定的一般/函数类型属性
