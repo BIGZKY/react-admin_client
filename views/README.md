@@ -53,6 +53,11 @@
         4). 说明: 一般都使用PureComponent来优化组件性能
 
 
+#   widthRouter高阶组件
+    包装非路由组件， 返回一个新的组件
+    新的组件想非路由组件传递3个属性： history/location/macth
+
+
 #  react-redux
     1. redact-redux 向外暴露了像个api
         Provider 组建类
@@ -68,3 +73,8 @@
         mapDispatchToProps: 为一个函数或 对象，用来指定想UI组件传递哪些函数属性
         connect() 执行的返回值为一个高阶组件： 包装UI组件，返回一个新的容器组件
         容器组件会向UI传入前面指定的一般/函数类型属性
+        简写形式： 
+            export default connect(
+                state => ({user: state.user}),
+                {setHeadTitle}
+            )(LeftNav)
